@@ -1,0 +1,46 @@
+{
+  "name": "wordaiwesome-frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev:content": "vite build --watch --config vite.config.content.ts",
+    "dev:background": "vite build --watch --config vite.config.background.ts",
+    "dev": "npm-run-all --parallel dev:content dev:background",
+    "clean": "rm -rf dist",
+    "build": "yarn clean && tsc -b && vite build --config vite.config.content.ts & vite build --config vite.config.background.ts",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@amplitude/analytics-browser": "2.30.0",
+    "@amplitude/unified": "1.0.0-beta.9",
+    "@tailwindcss/vite": "^4.1.16",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "tailwindcss": "^4.1.16"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.36.0",
+    "@types/chrome": "^0.1.27",
+    "@types/node": "24.6.0",
+    "@types/react": "19.1.16",
+    "@types/react-dom": "19.1.9",
+    "@vitejs/plugin-react-swc": "4.1.0",
+    "eslint": "9.36.0",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-better-tailwindcss": "3.7.10",
+    "eslint-plugin-prettier": "5.5.4",
+    "eslint-plugin-react-hooks": "5.2.0",
+    "eslint-plugin-react-refresh": "0.4.22",
+    "eslint-plugin-simple-import-sort": "12.1.1",
+    "globals": "16.4.0",
+    "npm-run-all": "4.1.5",
+    "prettier": "3.6.2",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.45.0",
+    "vite": "7.1.7",
+    "vite-plugin-svgr": "4.5.0",
+    "vite-tsconfig-paths": "5.1.4",
+    "vitest": "4.0.7"
+  }
+}

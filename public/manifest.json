@@ -1,0 +1,47 @@
+{
+  "manifest_version": 3,
+  "name": "WordAIwesome Extension",
+  "description": "cool extension description",
+  "version": "0.0.0",
+  "commands": {
+    "reload-extension": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+E",
+        "mac": "Command+Shift+E"
+      },
+      "description": "Reload the extension"
+    }
+  },
+  "action": {
+    "default_popup": "src/entrypoints/popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "type": "module"
+    }
+  ],
+  "permissions": [
+    "tabs",
+    "storage",
+    "commands"
+  ],
+  "host_permissions": [],
+  "icons": {
+    "16": "icons/icon-16.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  }
+}
+
