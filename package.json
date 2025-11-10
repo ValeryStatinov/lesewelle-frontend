@@ -4,11 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev:content": "vite build --watch --config vite.config.content.ts",
-    "dev:background": "vite build --watch --config vite.config.background.ts",
+    "dev:content": "vite build -m development --watch --config vite.config.content.ts",
+    "dev:background": "vite build -m development --watch --config vite.config.background.ts",
     "dev": "npm-run-all --parallel dev:content dev:background",
     "clean": "rm -rf dist",
-    "build": "yarn clean && tsc -b && vite build --config vite.config.content.ts & vite build --config vite.config.background.ts",
+    "build:content": "vite build -m production --config vite.config.content.ts",
+    "build:background": "vite build -m production --config vite.config.background.ts",
+    "build": "yarn clean && tsc -b && yarn build:content && yarn build:background",
     "lint": "eslint ."
   },
   "dependencies": {
