@@ -38,6 +38,21 @@ export class AuthManager {
     this.persistenceManager = persistenceManager;
   }
 
+  public async getDeviceId(): Promise<string> {
+    let deviceId = await this.persistenceManager.getItem<string>(DEVICE_ID_STORAGE_KEY);
+
+    if (!deviceId) {
+      await this.refreshToken();
+
+      deviceId = await this.persistenceManager.getItem<string>(DEVICE_ID_STORAGE_KEY);
+      if (!deviceId) {
+        throw new Error('Device ID not found');
+      }
+    }
+
+    return deviceId;
+  }
+
   public async getAccessToken(): Promise<string> {
     const accessToken = await this.persistenceManager.getItem<string>(ACCESS_TOKEN_STORAGE_KEY);
 

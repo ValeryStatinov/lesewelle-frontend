@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "WordAIwesome Extension",
-  "description": "cool extension description",
-  "version": "0.0.0",
+  "name": "Lesewelle Extension",
+  "description": "Lesewelle extension to analyze German text and get translations",
+  "version": "0.0.1",
   "commands": {
     "reload-extension": {
       "suggested_key": {
@@ -13,7 +13,7 @@
     }
   },
   "action": {
-    "default_popup": "src/entrypoints/popup.html",
+    "default_title": "Click to activate extension widget",
     "default_icon": {
       "16": "icons/icon-16.png",
       "48": "icons/icon-48.png",
@@ -33,6 +33,7 @@
     }
   ],
   "permissions": [
+    "activeTab",
     "tabs",
     "storage",
     "commands"

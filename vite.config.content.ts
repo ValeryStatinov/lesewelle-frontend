@@ -6,6 +6,9 @@ import { defineConfig, loadEnv } from 'vite';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
+const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf-8')) as Record<string, unknown>;
+const EXT_VERSION = packageJson.version as string;
+
 const manifestPlugin = (mode: string) => {
   return {
     name: 'manifest-plugin',
@@ -47,6 +50,9 @@ export default defineConfig(({ mode }) => {
       },
       outDir: 'dist',
       emptyOutDir: false,
+    },
+    define: {
+      EXT_VERSION: JSON.stringify(EXT_VERSION),
     },
   };
 });

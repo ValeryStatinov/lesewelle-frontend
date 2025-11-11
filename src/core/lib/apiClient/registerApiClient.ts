@@ -17,8 +17,15 @@ export let _apiClient: ApiClienter = {
   postStream: () => {
     throw apiClientNotInitializedError;
   },
+  getDeviceId: () => {
+    throw apiClientNotInitializedError;
+  },
 };
 
 export const registerApiClient = (apiClient: ApiClienter) => {
   _apiClient = apiClient;
+};
+
+export const getDeviceId = async () => {
+  return _apiClient.getDeviceId();
 };

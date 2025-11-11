@@ -1,6 +1,10 @@
+import fs from 'fs';
 import { resolve } from 'path';
 import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
+
+const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf-8')) as Record<string, unknown>;
+const EXT_VERSION = packageJson.version as string;
 
 // https://vite.dev/config/
 export default defineConfig(() => {
@@ -18,6 +22,9 @@ export default defineConfig(() => {
       },
       outDir: 'dist',
       emptyOutDir: false,
+    },
+    define: {
+      EXT_VERSION: JSON.stringify(EXT_VERSION),
     },
   };
 });

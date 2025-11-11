@@ -8,3 +8,13 @@
     - turn on developer mode
     - click load unpacked
     - choose dist folder
+
+## Release
+1) Run one of
+```bash
+yarn version --patch
+yarn version --minor
+yarn version --major
+```
+
+2) Run `yarn build`

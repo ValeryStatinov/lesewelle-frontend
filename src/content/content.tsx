@@ -1,20 +1,16 @@
-import { createRoot } from 'react-dom/client';
-
-import { App } from './App';
+import { renderApp } from './App/renderApp';
+import { registerMessageListeners } from './initialize/registerMessageListeners';
+import { addStylesToShadowRoot, createShadowRoot } from './initialize/shadowRoot';
 import styles from './index.css?inline';
 
 const runContentScript = () => {
-  const div = document.createElement('div');
-  const shadow = div.attachShadow({ mode: 'closed' });
+  const { shadowRoot, widgetContainer } = createShadowRoot();
+  addStylesToShadowRoot(styles);
 
-  const style = document.createElement('style');
-  style.textContent = styles;
-  shadow.appendChild(style);
+  document.body.appendChild(widgetContainer);
 
-  document.body.appendChild(div);
-
-  const reactRoot = createRoot(shadow);
-  reactRoot.render(<App />);
+  renderApp(shadowRoot);
+  registerMessageListeners();
 };
 
 runContentScript();

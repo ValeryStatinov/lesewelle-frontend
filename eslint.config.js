@@ -34,6 +34,7 @@ export default defineConfig([
     rules: {
       ...reactHooks.configs.recommended.rules,
       ...eslintPluginBetterTailwindcss.configs["recommended-warn"].rules,
+      "@typescript-eslint/ban-ts-comment": "warn",
       "better-tailwindcss/enforce-consistent-line-wrapping": ["warn", { printWidth: 120 }],
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
       'prettier/prettier': ['error', {}, { usePrettierrc: true }],
@@ -65,7 +66,7 @@ export default defineConfig([
     },
     settings: {
       "better-tailwindcss": {
-        entryPoint: "src/index.css",
+        entryPoint: "src/content/index.css",
       }
     }
   },

@@ -18,6 +18,10 @@ export class ApiClient {
     }
   }
 
+  public async getDeviceId(): Promise<string> {
+    return this.authManager.getDeviceId();
+  }
+
   public async get<T>(path: string, params?: HttpClientRequestParams): Promise<T> {
     const headers = params?.headers ?? new Headers();
     await this.setAuthHeader(headers);

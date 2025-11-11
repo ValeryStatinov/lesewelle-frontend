@@ -13,12 +13,14 @@ export interface HttpClienter {
 
 export interface AuthManagerer {
   getAccessToken(): Promise<string>;
+  getDeviceId(): Promise<string>;
 }
 
 export interface ApiClienter {
   get<T>(path: string, params?: HttpClientRequestParams): Promise<T>;
   post<T>(path: string, params?: HttpClientRequestParams): Promise<T>;
   postStream(path: string, params?: HttpClientRequestParams): Promise<ReadableStreamDefaultReader>;
+  getDeviceId(): Promise<string>;
 }
 
 export type ClientType = 'extension' | 'frontend';
