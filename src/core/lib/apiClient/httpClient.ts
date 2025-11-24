@@ -1,5 +1,5 @@
+import type { HttpClientRequestParams } from './interfaces';
 import { ResponseErrorJSON } from './responseErrorJSON';
-import type { HttpClientRequestParams } from './types';
 
 type HttpClientConfig = {
   baseURL: string;
@@ -7,6 +7,9 @@ type HttpClientConfig = {
 
 type DoRequestParams = HttpClientRequestParams & { method: string };
 
+/**
+ * each call might throw ResponseErrorJSON
+ */
 export class HttpClient {
   private baseURL: string;
 

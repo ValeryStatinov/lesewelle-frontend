@@ -1,4 +1,4 @@
-import type { ApiClienter } from './types';
+import type { ApiClienter } from './interfaces';
 
 const apiClientNotInitializedError = new Error('ApiClient not initialized. Did you forget to call registerApiClient?');
 

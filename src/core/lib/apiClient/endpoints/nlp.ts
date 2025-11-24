@@ -1,35 +1,8 @@
+import type { WithAbortSignal } from '../interfaces';
+import { JsonStreamReader } from '../jsonStreamReader';
 import { _apiClient } from '../registerApiClient';
 
-export type TokensGroupId = string;
-
-export enum TokensGroupType {
-  FULL_VERB = 'FULL_VERB',
-  REFLEXIVE_VERB = 'REFLEXIVE_VERB',
-  WITH_FIXED_PREPOSITION_VERB = 'WITH_FIXED_PREPOSITION_VERB',
-  SEPARABLE_PREFIX_VERB = 'SEPARABLE_PREFIX_VERB',
-}
-
-export type TokensGroup = {
-  id: TokensGroupId;
-  groupType: TokensGroupType;
-  rootTokenId: number;
-  tokenIds: number[];
-  groupLemma: string;
-};
-
-export type UITokenId = number;
-
-export type UIToken = {
-  id: UITokenId;
-  text: string;
-  lemma: string;
-  pos: string;
-  tag: string;
-  dep: string;
-  groupIds: TokensGroupId[];
-  startChar: number;
-  endChar: number;
-};
+import type { TokensGroupsMap, UIToken } from './types/tokens';
 
 export type AnalyzeDeParams = {
   text: string;
@@ -37,7 +10,7 @@ export type AnalyzeDeParams = {
 
 export type AnalyzeDeResponse = {
   tokens: UIToken[];
-  groupsMap: TokensGroup[];
+  groupsMap: TokensGroupsMap;
 };
 
 export const apiAnalyzeDe = async (params: AnalyzeDeParams) => {
@@ -46,4 +19,42 @@ export const apiAnalyzeDe = async (params: AnalyzeDeParams) => {
   });
 
   return response;
+};
+
+export type TranslateWordParams = {
+  word: string;
+};
+
+export type TranslateWordResponse = {
+  translations: string[];
+};
+
+export const apiTranslateWord = async (params: TranslateWordParams) => {
+  const response = await _apiClient.post<TranslateWordResponse>('/api/nlp/translate/word', {
+    body: JSON.stringify(params),
+  });
+
+  return response;
+};
+
+export type TranslateTextParams = WithAbortSignal & {
+  text: string;
+  targetLanguage: string;
+};
+
+export type TranslateTextDeltaChunk = { delta: string };
+export type TranslateTextErrorChunk = { error: string };
+export type TranslateTextResponseChunk = TranslateTextDeltaChunk | TranslateTextErrorChunk;
+
+export const apiTranslateTextStream = async (params: TranslateTextParams) => {
+  const { signal, ...restParams } = params;
+
+  // this endpoint streams jsons TranslateTextResponseChunk separated by new lines (golang json encoder inserts new lines)
+  const reader = await _apiClient.postStream('/api/nlp/translate/text/stream', {
+    body: JSON.stringify(restParams),
+    signal,
+  });
+  const jsonStreamReader = new JsonStreamReader<TranslateTextResponseChunk>(reader);
+
+  return jsonStreamReader;
 };

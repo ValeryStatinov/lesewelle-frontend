@@ -1,14 +1,17 @@
-export type HttpClientRequestParams = {
+export type WithAbortSignal = {
+  signal?: AbortSignal;
+};
+
+export type HttpClientRequestParams = WithAbortSignal & {
   searchParams?: URLSearchParams;
   body?: BodyInit;
   headers?: Headers;
-  signal?: AbortSignal;
 };
 
 export interface HttpClienter {
   get<T>(path: string, params?: HttpClientRequestParams): Promise<T>;
   post<T>(path: string, params?: HttpClientRequestParams): Promise<T>;
-  postStream(path: string, params?: HttpClientRequestParams): Promise<ReadableStreamDefaultReader>;
+  postStream(path: string, params?: HttpClientRequestParams): Promise<ReadableStreamDefaultReader<ArrayBuffer>>;
 }
 
 export interface AuthManagerer {
@@ -19,7 +22,7 @@ export interface AuthManagerer {
 export interface ApiClienter {
   get<T>(path: string, params?: HttpClientRequestParams): Promise<T>;
   post<T>(path: string, params?: HttpClientRequestParams): Promise<T>;
-  postStream(path: string, params?: HttpClientRequestParams): Promise<ReadableStreamDefaultReader>;
+  postStream(path: string, params?: HttpClientRequestParams): Promise<ReadableStreamDefaultReader<ArrayBuffer>>;
   getDeviceId(): Promise<string>;
 }
 

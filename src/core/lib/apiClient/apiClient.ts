@@ -1,4 +1,4 @@
-import type { AuthManagerer, HttpClienter, HttpClientRequestParams } from './types';
+import type { AuthManagerer, HttpClienter, HttpClientRequestParams } from './interfaces';
 
 export class ApiClient {
   private httpClient: HttpClienter;

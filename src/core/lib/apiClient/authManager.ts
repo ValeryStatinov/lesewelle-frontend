@@ -1,4 +1,4 @@
-import type { ClientType, HttpClienter, PersistenceManager } from './types';
+import type { ClientType, HttpClienter, PersistenceManager } from './interfaces';
 
 const DEVICE_ID_STORAGE_KEY = 'deviceId';
 const ACCESS_TOKEN_STORAGE_KEY = 'accessToken';
