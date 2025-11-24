@@ -1,19 +1,12 @@
+import { type ActivateExtensionWidgetMessage, ExtensionMessageType } from 'core/chromeMessages/messages';
 import { initAmplitude, trackExtensionInstalled } from 'core/lib/amplitude/amplitude';
 import { getDeviceId } from 'core/lib/apiClient';
-import { type ActivateExtensionWidgetMessage, ExtensionMessageType } from 'core/types/messages';
 
 import { initApiClient } from './initApiClient';
 import { registerMessageListeners } from './registerMessageListeners';
 
 export const initialize = async () => {
   initApiClient();
-
-  const deviceId = await getDeviceId();
-  const amplitudeApiKey = import.meta.env.VITE_AMPLITUDE_API_KEY;
-  const appVersion = EXT_VERSION;
-
-  await initAmplitude(amplitudeApiKey, deviceId, appVersion, 'extension');
-
   registerMessageListeners();
 
   chrome.runtime.onInstalled.addListener((details) => {
@@ -37,4 +30,10 @@ export const initialize = async () => {
 
     void chrome.tabs.sendMessage(tab.id, message);
   });
+
+  const deviceId = await getDeviceId();
+  const amplitudeApiKey = import.meta.env.VITE_AMPLITUDE_API_KEY;
+  const appVersion = EXT_VERSION;
+
+  await initAmplitude(amplitudeApiKey, deviceId, appVersion, 'extension');
 };
