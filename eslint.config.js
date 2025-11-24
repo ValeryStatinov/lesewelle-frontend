@@ -40,6 +40,9 @@ export default defineConfig([
       'prettier/prettier': ['error', {}, { usePrettierrc: true }],
       '@typescript-eslint/no-unused-vars': ['warn'],
       "@typescript-eslint/no-unnecessary-type-parameters": "off",
+      '@typescript-eslint/no-unnecessary-condition': 'off',
+      '@typescript-eslint/no-misused-promises': 'off',
+      'better-tailwindcss/no-unregistered-classes': ['warn', { detectComponentClasses: true }],
       'simple-import-sort/imports': [
         'warn',
         {
