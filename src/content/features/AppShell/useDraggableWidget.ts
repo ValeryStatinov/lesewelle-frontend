@@ -28,7 +28,7 @@ export const useDraggableWidget = (params: Params) => {
 
     const setInitialPosition = () => {
       const x = document.body.offsetWidth - draggableElement.offsetWidth;
-      const y = document.body.offsetHeight / 8;
+      const y = window.screen.availHeight / 8;
 
       draggableElement.style.transform = `translate(${x.toFixed(2)}px, ${y.toFixed(2)}px)`;
     };
@@ -60,8 +60,10 @@ export const useDraggableWidget = (params: Params) => {
       const newX = e.clientX - offsetX;
       const newY = e.clientY - offsetY;
 
-      const maxX = document.body.offsetWidth - draggableElement.offsetWidth;
-      const maxY = document.body.offsetHeight - draggableElement.offsetHeight;
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+
+      const maxX = window.innerWidth - scrollbarWidth - draggableElement.offsetWidth;
+      const maxY = window.innerHeight - draggableElement.offsetHeight;
 
       const constrainedX = Math.max(0, Math.min(newX, maxX));
       const constrainedY = Math.max(0, Math.min(newY, maxY));

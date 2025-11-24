@@ -18,7 +18,7 @@ export const Header = (props: Props) => {
   };
 
   return (
-    <div className={cn('group flex items-center justify-between p-2', className)}>
+    <div className={cn('group flex items-center justify-between', className)}>
       <Button
         ref={dragHandleRef}
         variant='ghost'
