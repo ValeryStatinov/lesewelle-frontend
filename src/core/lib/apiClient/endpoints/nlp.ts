@@ -1,3 +1,5 @@
+import type { TargetLanguage } from 'core/lib/types/languages';
+
 import type { WithAbortSignal } from '../interfaces';
 import { JsonStreamReader } from '../jsonStreamReader';
 import { _apiClient } from '../registerApiClient';
@@ -23,6 +25,7 @@ export const apiAnalyzeDe = async (params: AnalyzeDeParams) => {
 
 export type TranslateWordParams = {
   word: string;
+  targetLanguage: TargetLanguage;
 };
 
 export type TranslateWordResponse = {

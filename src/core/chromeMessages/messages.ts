@@ -3,7 +3,6 @@ import type { TargetLanguage } from 'core/lib/types/languages';
 
 export enum ExtensionMessageType {
   ANALYZE_TEXT_DE = 'ANALYZE_TEXT_DE',
-  GET_TEXT_TRANSLATION = 'GET_TEXT_TRANSLATION',
   GET_WORD_TRANSLATION = 'GET_WORD_TRANSLATION',
   ACTIVATE_EXTENSION_WIDGET = 'ACTIVATE_EXTENSION_WIDGET',
   TRANSLATE_TEXT_STREAM = 'TRANSLATE_TEXT_STREAM',
@@ -73,14 +72,16 @@ export type TranslateWordMessage = {
   type: ExtensionMessageType.GET_WORD_TRANSLATION;
   payload: {
     word: string;
+    targetLanguage: TargetLanguage;
   };
 };
 
-export const sendTranslateWordMessage = async (word: string) => {
+export const sendTranslateWordMessage = async (word: string, targetLanguage: TargetLanguage) => {
   const message: TranslateWordMessage = {
     type: ExtensionMessageType.GET_WORD_TRANSLATION,
     payload: {
       word,
+      targetLanguage,
     },
   };
 

@@ -1,25 +1,15 @@
+import { setIsTextTranslationEnabled, setTargetTranslationLanguage } from 'core/lib/state/appState';
+import type { TargetLanguage } from 'core/lib/types/languages';
 import { persistenceManager } from 'background/persistence/persistenceManager';
-import { proxy } from 'valtio';
 
-const TRANSLATION_ENABLED_KEY = 'translationEnabled';
+import { TARGET_TRANSLATION_LANGUAGE_KEY, TRANSLATION_ENABLED_KEY } from './consts';
 
-export const appState = proxy({
-  isWidgetActive: import.meta.env.MODE === 'development' ? true : false,
-  isTextTranslationEnabled: true,
-});
-
-export const initAppState = async () => {
-  const promises: [Promise<boolean | undefined>] = [persistenceManager.getItem<boolean>(TRANSLATION_ENABLED_KEY)];
-
-  const [isTextTranslationEnabled] = await Promise.all(promises);
-  appState.isTextTranslationEnabled = isTextTranslationEnabled ?? true;
-};
-
-export const setIsWidgetActive = (isWidgetActive: boolean) => {
-  appState.isWidgetActive = isWidgetActive;
-};
-
-export const setIsTextTranslationEnabled = (isTextTranslationEnabled: boolean) => {
-  appState.isTextTranslationEnabled = isTextTranslationEnabled;
+export const setIsTextTranslationEnabledWithPersistence = (isTextTranslationEnabled: boolean) => {
+  setIsTextTranslationEnabled(isTextTranslationEnabled);
   void persistenceManager.setItem(TRANSLATION_ENABLED_KEY, isTextTranslationEnabled);
+};
+
+export const setTargetLangueageWithPersistence = (targetLanguage: TargetLanguage) => {
+  setTargetTranslationLanguage(targetLanguage);
+  void persistenceManager.setItem(TARGET_TRANSLATION_LANGUAGE_KEY, targetLanguage);
 };

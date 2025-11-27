@@ -50,12 +50,14 @@ export default defineConfig([
             // Packages. `react` related packages come first.
             [
               '^react',
-              '^(?!(core|features)$)@?\\w+',
+              '^(?!(core|features|content|background)$)@?\\w+',
             ],
             // Internal packages.
             [
               '^features.*',
               '^core.*',
+              '^content.*',
+              '^background.*',
             ],
             // Parent imports. Put `..` last.
             ['^\\.\\.(?!/?$)', '^\\.\\./?$'],
@@ -70,6 +72,7 @@ export default defineConfig([
     settings: {
       "better-tailwindcss": {
         entryPoint: "src/content/index.css",
+        attributes: [".*ClassName"]
       }
     }
   },

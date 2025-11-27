@@ -12,6 +12,7 @@ export const handleTranslateWord: ExtensionMessageHandler<TranslateWordMessage> 
   try {
     const p: TranslateWordParams = {
       word: message.payload.word,
+      targetLanguage: message.payload.targetLanguage,
     };
     const response = await apiTranslateWord(p);
 

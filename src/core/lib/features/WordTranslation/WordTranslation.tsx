@@ -31,8 +31,7 @@ const TrabslationTabs = ({ translationsMap }: { translationsMap: Record<string, 
   );
 };
 
-type Props = {
-  show: boolean;
+export type Props = {
   translationsMap: Record<string, string[]>;
   loading: boolean;
   error: string | undefined;
@@ -41,7 +40,7 @@ type Props = {
 };
 
 export const WordTranslation = (props: Props) => {
-  const { show, translationsMap, loading, error, onClose, className } = props;
+  const { translationsMap, loading, error, onClose, className } = props;
 
   const renderTabs = Object.keys(translationsMap).length > 1;
   const firstLemma = Object.keys(translationsMap).length > 0 ? Object.keys(translationsMap)[0] : undefined;
@@ -58,14 +57,7 @@ export const WordTranslation = (props: Props) => {
   );
 
   return (
-    <div
-      className={cn(
-        'absolute top-full left-0 h-[calc(52%+8px)] w-full bg-white p-3 transition-all',
-        'shadow-[0_0_8px_rgba(0,0,0,0.25)]',
-        show && 'top-[48%]',
-        className,
-      )}
-    >
+    <div className={cn('h-full w-full', className)}>
       <Button variant='ghost' size='icon-sm' onClick={onClose} className='absolute top-3 right-3'>
         <CircleX className='cursor-pointer' />
       </Button>

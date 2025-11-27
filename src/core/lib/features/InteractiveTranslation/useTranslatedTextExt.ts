@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useSnapshot } from 'valtio';
 
 import {
   ExtensionMessageType,
@@ -7,7 +8,7 @@ import {
   type TranslateTextStreamMessage,
 } from 'core/chromeMessages/messages';
 import type { TranslateTextResponseChunk } from 'core/lib/apiClient';
-import { TargetLanguage } from 'core/lib/types/languages';
+import { appState } from 'core/lib/state/appState';
 
 type Params = {
   originalText: string;
@@ -20,6 +21,8 @@ export const useTranslatedTextExt = (params: Params) => {
   const [translatedText, setTranslatedText] = useState<string>('');
   const [translationError, setTranslationError] = useState<string | undefined>(undefined);
   const [streamInProgress, setStreamInProgress] = useState(false);
+
+  const { targetTranslationLanguage } = useSnapshot(appState);
 
   useEffect(() => {
     setTranslatedText('');
@@ -36,7 +39,7 @@ export const useTranslatedTextExt = (params: Params) => {
       type: ExtensionMessageType.TRANSLATE_TEXT_STREAM,
       payload: {
         text: originalText,
-        targetLanguage: TargetLanguage.ENGLISH,
+        targetLanguage: targetTranslationLanguage,
       },
     };
 
@@ -64,7 +67,7 @@ export const useTranslatedTextExt = (params: Params) => {
     return () => {
       port.disconnect();
     };
-  }, [enabled, originalText]);
+  }, [enabled, originalText, targetTranslationLanguage]);
 
   return { translatedText, translationError, isLoading: streamInProgress && !translatedText };
 };

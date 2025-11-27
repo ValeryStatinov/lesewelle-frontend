@@ -1,7 +1,8 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
+import { useSnapshot } from 'valtio';
 
 import { type AnalyzeDeResponse } from 'core/lib/apiClient';
-import type { TokensGroupsMap, UIToken } from 'core/lib/apiClient/endpoints/types/tokens';
+import { interactiveTranslationState, setGroupsMap, setUITokens } from 'core/lib/state/interactiveTranslationState';
 import { useApiErrorHandler } from 'core/lib/utils/useApiErrorHandler';
 import { useEventCallback } from 'core/lib/utils/useEventCallback';
 
@@ -12,8 +13,8 @@ type Params = {
 export const useUITokens = (params: Params) => {
   const { analyzeDEText } = params;
 
-  const [uiTokens, setUITokens] = useState<UIToken[]>([]);
-  const [groupsMap, setGroupsMap] = useState<TokensGroupsMap>({});
+  const { uiTokens, groupsMap } = useSnapshot(interactiveTranslationState);
+
   const { apiErrorMessage, handleApiError, resetApiErrorMessage } = useApiErrorHandler();
 
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -25,6 +26,7 @@ export const useUITokens = (params: Params) => {
 
     abortControllerRef.current?.abort();
     abortControllerRef.current = new AbortController();
+
     setUITokens([]);
     setGroupsMap({});
     resetApiErrorMessage();

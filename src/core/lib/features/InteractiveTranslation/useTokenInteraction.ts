@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
+import { useSnapshot } from 'valtio';
 
 import { type TokensGroupsMap, TokensGroupType, type UIToken } from 'core/lib/apiClient/endpoints/types/tokens';
+import { interactiveTranslationState, setSelectedRootToken } from 'core/lib/state/interactiveTranslationState';
 import { useEventCallback } from 'core/lib/utils/useEventCallback';
 
 import { NON_INTERACTIVE_TOKEN_ID, type RenderToken } from './types';
@@ -14,7 +16,7 @@ export const useTokenInteraction = (params: Params) => {
   const { uiTokens, groupsMap } = params;
 
   const [hoveredToken, setHoveredToken] = useState<UIToken | undefined>(undefined);
-  const [selectedRootToken, setSelectedRootToken] = useState<UIToken | undefined>(undefined);
+  const { selectedRootToken } = useSnapshot(interactiveTranslationState);
 
   useEffect(() => {
     if (uiTokens.length === 0) {
@@ -71,16 +73,11 @@ export const useTokenInteraction = (params: Params) => {
     setSelectedRootToken(rootUIToken);
   });
 
-  const resetSelectedRootToken = () => {
-    setSelectedRootToken(undefined);
-  };
-
   return {
     hoveredToken,
     selectedRootToken,
     handleMouseEnterToken,
     handleMouseLeaveToken,
     handleClickToken,
-    resetSelectedRootToken,
   };
 };

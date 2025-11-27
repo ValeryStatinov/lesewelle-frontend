@@ -1,7 +1,3 @@
-import { handleAnalyzeTextDe } from 'background/messageHandlers/handleAnalyzeTextDe';
-import { handleTranslateTextStream } from 'background/messageHandlers/handleTranslateTextStream';
-import { handleTranslateWord } from 'background/messageHandlers/handleTranslateWord';
-
 import {
   type ExtensionMessage,
   isAnalyzeTextDeMessage,
@@ -9,6 +5,9 @@ import {
   isTranslateWordMessage,
   PortNameType,
 } from 'core/chromeMessages/messages';
+import { handleAnalyzeTextDe } from 'background/messageHandlers/handleAnalyzeTextDe';
+import { handleTranslateTextStream } from 'background/messageHandlers/handleTranslateTextStream';
+import { handleTranslateWord } from 'background/messageHandlers/handleTranslateWord';
 
 export const registerMessageListeners = () => {
   chrome.runtime.onMessage.addListener((message: ExtensionMessage, sender, sendResponse) => {
