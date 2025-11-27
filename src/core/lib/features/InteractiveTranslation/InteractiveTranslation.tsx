@@ -5,6 +5,7 @@ import { TokenizedText } from './TokenizedText';
 import { TranslatedText } from './TranslatedText';
 import { useLastSelectedText } from './useLastSelectedText';
 import { useRenderTokens } from './useRenderTokens';
+import { useSyncScroll } from './useSyncScroll';
 import { useTokenInteraction } from './useTokenInteraction';
 import { useUITokens } from './useUITokens';
 
@@ -62,6 +63,8 @@ export const InteractiveTranslation = (props: Props) => {
     enabled: isTextTranslationEnabled,
   });
 
+  const { originalRef, translatedRef, handleScroll } = useSyncScroll();
+
   return (
     <div className={cn('relative flex h-0 grow flex-col gap-3 overflow-hidden select-none', className)}>
       <TokenizedText
@@ -71,6 +74,10 @@ export const InteractiveTranslation = (props: Props) => {
         onMouseEnterToken={handleMouseEnterToken}
         onMouseLeaveToken={handleMouseLeaveToken}
         className={commonStyles}
+        onScroll={() => {
+          handleScroll(originalRef, translatedRef);
+        }}
+        ref={originalRef}
       />
 
       {isTextTranslationEnabled && (
@@ -79,6 +86,10 @@ export const InteractiveTranslation = (props: Props) => {
           translationError={translationError}
           loading={isTranslationLoading}
           className={commonStyles}
+          onScroll={() => {
+            handleScroll(translatedRef, originalRef);
+          }}
+          ref={translatedRef}
         />
       )}
     </div>
