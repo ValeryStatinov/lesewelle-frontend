@@ -10,7 +10,6 @@ const FULL_TEXT_TRANSLATION_ID = 'full-text-translation';
 const TARGET_TRANSLATION_LANGUAGE_ID = 'target-translation-language';
 
 type Props = {
-  onClose: () => void;
   onChangeFullTextTranslationEnabled: (isFullTextTranslationEnabled: boolean) => void;
   onChangeTargetLanguage: (targetLanguage: TargetLanguage) => void;
   className?: string;

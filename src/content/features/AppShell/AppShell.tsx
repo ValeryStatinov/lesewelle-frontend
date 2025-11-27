@@ -8,10 +8,18 @@ import { createLoadWordTranslationsHook } from 'core/lib/features/WordTranslatio
 import { AnimatedWordTranslationBottomSheet } from 'core/lib/features/WordTranslation/WordTranslationBottomSheet';
 import { appState } from 'core/lib/state/appState';
 import { interactiveTranslationState, setSelectedRootToken } from 'core/lib/state/interactiveTranslationState';
-import { setCurrentTab } from 'core/lib/state/screensState';
+import { noop } from 'core/lib/utils/noop';
 import { useEventCallback } from 'core/lib/utils/useEventCallback';
+import { AnimatedDictionaryScreen } from 'content/features/DictionaryScreen/DictionaryScreen';
 import { AnimatedSettingsScreen } from 'content/features/Settings/SettingsScreen';
 import { setIsTextTranslationEnabledWithPersistence, setTargetLangueageWithPersistence } from 'content/state/appState';
+import {
+  addToDictionary,
+  dictionaryState,
+  setSelectedLemma,
+  useDictionarySnapshot,
+  useWordTranslationsDictionary,
+} from 'content/state/dictionaryState';
 
 import { Header } from './Header';
 import { useDraggableWidget } from './useDraggableWidget';
@@ -23,6 +31,7 @@ export const AppShell = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const { isWidgetActive, isTextTranslationEnabled } = useSnapshot(appState);
   const { selectedRootToken } = useSnapshot(interactiveTranslationState);
+  const { selectedLemma } = useSnapshot(dictionaryState);
 
   useDraggableWidget({
     dragHandleRef,
@@ -34,8 +43,12 @@ export const AppShell = () => {
     setSelectedRootToken(undefined);
   });
 
-  const handleCloseSettings = useEventCallback(() => {
-    setCurrentTab(undefined);
+  const handleCloseDictionaryWordTranslations = useEventCallback(() => {
+    setSelectedLemma(undefined);
+  });
+
+  const handleDictionaryEntryClick = useEventCallback((lemma: string) => {
+    setSelectedLemma(lemma);
   });
 
   if (!isWidgetActive) {
@@ -62,14 +75,28 @@ export const AppShell = () => {
 
         <AnimatedWordTranslationBottomSheet
           show={!!selectedRootToken}
+          useDictionary={useDictionarySnapshot}
           useWordTranslations={useLoadWordTranslations}
           onClose={handleCloseLoadedWordTranslations}
+          onAddToDictionary={addToDictionary}
         />
 
         <AnimatedSettingsScreen
-          onClose={handleCloseSettings}
           onChangeFullTextTranslationEnabled={setIsTextTranslationEnabledWithPersistence}
           onChangeTargetLanguage={setTargetLangueageWithPersistence}
+        />
+
+        <AnimatedDictionaryScreen
+          useDictionary={useDictionarySnapshot}
+          onDictionaryEntryClick={handleDictionaryEntryClick}
+        />
+
+        <AnimatedWordTranslationBottomSheet
+          show={!!selectedLemma}
+          useDictionary={useDictionarySnapshot}
+          useWordTranslations={useWordTranslationsDictionary}
+          onClose={handleCloseDictionaryWordTranslations}
+          onAddToDictionary={noop}
         />
       </main>
     </div>

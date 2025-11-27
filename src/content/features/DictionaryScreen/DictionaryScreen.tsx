@@ -1,8 +1,7 @@
 import { useSnapshot } from 'valtio';
 
-import { Settings } from 'core/lib/features/Settings/Settings';
+import { Dictionary } from 'core/lib/features/Dictionary/Dictionary';
 import { screensState } from 'core/lib/state/screensState';
-import type { TargetLanguage } from 'core/lib/types/languages';
 import { Separator } from 'core/lib/ui/atoms/Separator/Separator';
 import { Screen } from 'core/lib/ui/molecules/Screen/Screen';
 import type { ScreenProps } from 'core/lib/ui/molecules/Screen/types';
@@ -10,35 +9,34 @@ import { Animator } from 'core/lib/ui/organisms/Animator/Animator';
 import { cn } from 'core/lib/utils/cn';
 
 type OwnProps = {
-  onChangeFullTextTranslationEnabled: (isFullTextTranslationEnabled: boolean) => void;
-  onChangeTargetLanguage: (targetLanguage: TargetLanguage) => void;
+  useDictionary: () => Record<string, string[]>;
+  onDictionaryEntryClick: (lemma: string) => void;
 };
 
-const SettingsScreen = (props: ScreenProps & OwnProps) => {
-  const { className, onAnimationEnd, onTransitionEnd, onChangeFullTextTranslationEnabled, onChangeTargetLanguage } =
-    props;
+const DictionaryScreen = (props: ScreenProps & OwnProps) => {
+  const { useDictionary, onDictionaryEntryClick, className, onAnimationEnd, onTransitionEnd } = props;
 
   return (
     <Screen className={cn('p-3 pt-0', className)} onAnimationEnd={onAnimationEnd} onTransitionEnd={onTransitionEnd}>
       <Separator />
-      <Settings
-        className='mt-2'
-        onChangeFullTextTranslationEnabled={onChangeFullTextTranslationEnabled}
-        onChangeTargetLanguage={onChangeTargetLanguage}
+      <Dictionary
+        className='mt-2 flex h-full flex-1 flex-col'
+        useDictionary={useDictionary}
+        onDictionaryEntryClick={onDictionaryEntryClick}
       />
     </Screen>
   );
 };
 
-export const AnimatedSettingsScreen = (props: OwnProps) => {
+export const AnimatedDictionaryScreen = (props: OwnProps) => {
   const { currentTab } = useSnapshot(screensState);
 
   return (
     <Animator
-      show={currentTab === 'settings'}
+      show={currentTab === 'dictionary'}
       onEnterClassName='translate-x-0 opacity-100'
       onExitClassName='opacity-0'
-      Component={SettingsScreen}
+      Component={DictionaryScreen}
       data={props}
     />
   );

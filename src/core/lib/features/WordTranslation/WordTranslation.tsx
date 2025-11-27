@@ -1,60 +1,52 @@
-import { CircleX } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { BookMarked, BookmarkPlus, CircleX } from 'lucide-react';
 
 import { Button } from 'core/lib/ui/atoms/Button/Button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from 'core/lib/ui/organisms/Tabs/Tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from 'core/lib/ui/organisms/Select/Select';
 import { cn } from 'core/lib/utils/cn';
-
-const TrabslationTabs = ({ translationsMap }: { translationsMap: Record<string, string[]> }) => {
-  const defaultTabsValue = Object.keys(translationsMap).length > 0 ? Object.keys(translationsMap)[0] : '';
-
-  return (
-    <Tabs defaultValue={defaultTabsValue} className='w-full'>
-      <TabsList>
-        {Object.keys(translationsMap).map((lemma) => {
-          return (
-            <TabsTrigger key={lemma} value={lemma} className='text-lg font-bold'>
-              {lemma}
-            </TabsTrigger>
-          );
-        })}
-      </TabsList>
-
-      {Object.entries(translationsMap).map(([lemma, translations]) => {
-        return (
-          <TabsContent key={lemma} value={lemma}>
-            <div className='text-sm text-stone-400'>Translations:</div>
-            {translations.join(', ')}
-          </TabsContent>
-        );
-      })}
-    </Tabs>
-  );
-};
 
 export type Props = {
   translationsMap: Record<string, string[]>;
   loading: boolean;
   error: string | undefined;
+  useDictionary: () => Record<string, string[]>;
   onClose: () => void;
+  onAddToDictionary: (lemma: string, translations: string[]) => void;
   className?: string;
 };
 
 export const WordTranslation = (props: Props) => {
-  const { translationsMap, loading, error, onClose, className } = props;
+  const { useDictionary, translationsMap, loading, error, onClose, onAddToDictionary, className } = props;
 
-  const renderTabs = Object.keys(translationsMap).length > 1;
   const firstLemma = Object.keys(translationsMap).length > 0 ? Object.keys(translationsMap)[0] : undefined;
-  const firstLemmaTranslations = firstLemma ? translationsMap[firstLemma].join(', ') : undefined;
+  const [selectedLemma, setSelectedLemma] = useState<string | undefined>(firstLemma);
+  const dictionary = useDictionary();
 
-  const content = renderTabs ? (
-    <TrabslationTabs translationsMap={translationsMap} />
-  ) : (
-    <div>
-      <div className='text-lg font-bold'>{firstLemma}</div>
-      <div className='mt-1 text-sm text-stone-400'>Translations:</div>
-      <div>{firstLemmaTranslations}</div>
-    </div>
-  );
+  const hasInDictionary = !!selectedLemma && !!dictionary[selectedLemma];
+
+  useEffect(() => {
+    const firstLemma = Object.keys(translationsMap).length > 0 ? Object.keys(translationsMap)[0] : undefined;
+    setSelectedLemma(firstLemma);
+  }, [loading, translationsMap]);
+
+  const translations =
+    selectedLemma && translationsMap[selectedLemma] ? translationsMap[selectedLemma].join(', ') : undefined;
+
+  const handleLemmaChange = (lemma: string) => {
+    setSelectedLemma(lemma);
+  };
+
+  const handleAddToDictionary = () => {
+    if (hasInDictionary) {
+      return;
+    }
+
+    if (!selectedLemma || !translationsMap[selectedLemma]) {
+      return;
+    }
+
+    onAddToDictionary(selectedLemma, translationsMap[selectedLemma]);
+  };
 
   return (
     <div className={cn('h-full w-full', className)}>
@@ -64,7 +56,49 @@ export const WordTranslation = (props: Props) => {
       {loading && <div>Loading...</div>}
       {error && <div>{error}</div>}
 
-      {!loading && !error && Object.keys(translationsMap).length > 0 && content}
+      {!loading && !error && Object.keys(translationsMap).length > 0 && (
+        <>
+          <div className='flex items-center gap-1'>
+            {Object.keys(translationsMap).length > 1 ? (
+              <Select value={selectedLemma} onValueChange={handleLemmaChange}>
+                <SelectTrigger className='p-0 text-lg font-bold'>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className='z-10' position='popper'>
+                  {Object.keys(translationsMap).map((lemma) => (
+                    <SelectItem key={lemma} value={lemma}>
+                      {lemma}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : (
+              <div className='flex h-9 items-center text-lg font-bold'>{selectedLemma}</div>
+            )}
+
+            <Button
+              title={hasInDictionary ? 'Word is in your dictionary' : 'Add to my dictionary'}
+              variant='ghost'
+              size='icon-sm'
+              onClick={handleAddToDictionary}
+              className={cn(
+                'justify-self-end',
+                !hasInDictionary && 'cursor-pointer',
+                hasInDictionary &&
+                  `
+                    cursor-default
+                    hover:bg-transparent
+                  `,
+              )}
+            >
+              {hasInDictionary ? <BookMarked stroke='var(--color-blue-600)' /> : <BookmarkPlus />}
+            </Button>
+          </div>
+
+          <div className='mt-1 text-sm text-stone-400'>Translations:</div>
+          <div>{translations}</div>
+        </>
+      )}
     </div>
   );
 };

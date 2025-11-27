@@ -5,7 +5,9 @@ import { useSnapshot } from 'valtio';
 import { setIsWidgetActive } from 'core/lib/state/appState';
 import { screensState, setCurrentTab } from 'core/lib/state/screensState';
 import { Button } from 'core/lib/ui/atoms/Button/Button';
+import GradientText from 'core/lib/ui/molecules/GradientText/GradientText';
 import { cn } from 'core/lib/utils/cn';
+import { setSelectedLemma } from 'content/state/dictionaryState';
 
 type Props = {
   className?: string;
@@ -39,6 +41,16 @@ export const Header = (props: Props) => {
     setCurrentTab('settings');
   };
 
+  const handleToggleDictionary = () => {
+    if (currentTab === 'dictionary') {
+      setCurrentTab(undefined);
+      setSelectedLemma(undefined);
+      return;
+    }
+
+    setCurrentTab('dictionary');
+  };
+
   const commonButtonStyles = getCommonButtonStyles(currentTab !== undefined);
   const activeTabButtonStyles = cn(
     `
@@ -60,7 +72,9 @@ export const Header = (props: Props) => {
         <Move />
       </Button>
 
-      <h1 className={cn('justify-self-center text-lg font-bold')}>Lesewelle</h1>
+      <GradientText className='justify-self-center select-none'>
+        <h1 className={cn('cursor-default justify-self-center text-lg font-bold')}>Lesewelle</h1>
+      </GradientText>
 
       <div className='flex items-center gap-1 justify-self-end'>
         <Button
@@ -77,8 +91,8 @@ export const Header = (props: Props) => {
           variant='ghost'
           size='icon-sm'
           title='My dictionary'
-          className={commonButtonStyles}
-          onClick={handleCloseApp}
+          className={cn(commonButtonStyles, currentTab === 'dictionary' && activeTabButtonStyles)}
+          onClick={handleToggleDictionary}
         >
           <BookOpen className='cursor-pointer' />
         </Button>

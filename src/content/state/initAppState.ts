@@ -11,8 +11,6 @@ export const initAppState = async () => {
   ];
   const [isTextTranslationEnabled, targetTranslationLanguage] = await Promise.all(promises);
 
-  console.log(targetTranslationLanguage);
-
   setIsTextTranslationEnabled(isTextTranslationEnabled ?? true);
   setTargetTranslationLanguage(targetTranslationLanguage ?? TargetLanguage.ENGLISH);
 };
