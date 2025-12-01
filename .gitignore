@@ -16,6 +16,7 @@ dist-ssr
 .env.development
 .env.production
 dist/
+bundle-stats.html
 
 # Editor directories and files
 .vscode/*

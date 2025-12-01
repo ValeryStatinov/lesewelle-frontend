@@ -1,3 +1,4 @@
+import type { AnalyticsEvents } from 'core/lib/amplitude/events';
 import { type AnalyzeDeResponse, ResponseErrorJSON, type TranslateWordResponse } from 'core/lib/apiClient';
 import type { TargetLanguage } from 'core/lib/types/languages';
 
@@ -6,6 +7,7 @@ export enum ExtensionMessageType {
   GET_WORD_TRANSLATION = 'GET_WORD_TRANSLATION',
   ACTIVATE_EXTENSION_WIDGET = 'ACTIVATE_EXTENSION_WIDGET',
   TRANSLATE_TEXT_STREAM = 'TRANSLATE_TEXT_STREAM',
+  TRACK_ANALYTICS = 'TRACK_ANALYTICS',
 }
 
 export type ExtensionMessage = {
@@ -124,3 +126,27 @@ export type StreamingDoneMessage = {
 };
 
 export const streamingDoneMessage = Object.freeze<StreamingDoneMessage>({ done: true });
+
+export type TrackAnalyticsMessage = {
+  type: ExtensionMessageType.TRACK_ANALYTICS;
+  payload: {
+    type: AnalyticsEvents;
+    properties?: Record<string, unknown>;
+  };
+};
+
+export const isTrackAnalyticsMessage = (message: ExtensionMessage): message is TrackAnalyticsMessage => {
+  return message.type === ExtensionMessageType.TRACK_ANALYTICS;
+};
+
+export const sendTrackAnalyticsMessage = async (type: AnalyticsEvents, properties?: Record<string, unknown>) => {
+  const message: TrackAnalyticsMessage = {
+    type: ExtensionMessageType.TRACK_ANALYTICS,
+    payload: {
+      type,
+      properties,
+    },
+  };
+
+  await chrome.runtime.sendMessage<TrackAnalyticsMessage>(message);
+};

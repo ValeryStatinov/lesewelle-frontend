@@ -1,6 +1,10 @@
 import { init, setDeviceId, track } from '@amplitude/analytics-browser';
 import type { EventOptions } from '@amplitude/analytics-browser/lib/esm/types';
 
+import type { TargetLanguage } from 'core/lib/types/languages';
+
+import { AnalyticsEvents } from './events';
+
 type PlatformType = 'extension' | 'frontend';
 
 let _initialized = false;
@@ -31,7 +35,8 @@ const isAmplitudeInitialized = () => {
   return _initialized;
 };
 
-const trackEvent = (
+// should only be used in background script, in handleTrackAnalytics callback
+export const trackEvent = (
   event: string,
   properties?: Record<string, unknown>,
   options?: Omit<EventOptions, 'device_id' | 'app_version' | 'platform'>,
@@ -52,5 +57,21 @@ const trackEvent = (
 };
 
 export const trackExtensionInstalled = (reason: string) => {
-  trackEvent('extension_installed', { reason });
+  trackEvent(AnalyticsEvents.EXTENSION_INSTALLED, { reason });
+};
+
+export const trackExtensionActivated = () => {
+  trackEvent(AnalyticsEvents.EXTENSION_ACTIVATED);
+};
+
+export const trackTranslateText = (textLength: number, targetLanguage: TargetLanguage) => {
+  trackEvent(AnalyticsEvents.TRANSLATE_TEXT, { textLength, targetLanguage });
+};
+
+export const trackAnalyzeDeText = (textLength: number) => {
+  trackEvent(AnalyticsEvents.ANALYZE_DE_TEXT, { textLength });
+};
+
+export const trackTranslateWord = (wordLength: number, targetLanguage: TargetLanguage) => {
+  trackEvent(AnalyticsEvents.TRANSLATE_WORD, { wordLength, targetLanguage });
 };

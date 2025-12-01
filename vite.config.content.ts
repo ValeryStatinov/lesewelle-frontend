@@ -2,6 +2,10 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react-swc';
 import fs from 'fs';
 import { resolve } from 'path';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig, loadEnv } from 'vite';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
@@ -36,7 +40,19 @@ const manifestPlugin = (mode: string) => {
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   return {
-    plugins: [tailwindcss(), react(), tsconfigPaths(), svgr(), manifestPlugin(mode)],
+    plugins: [
+      tailwindcss(),
+      react(),
+      tsconfigPaths(),
+      svgr(),
+      manifestPlugin(mode),
+      // visualizer({
+      //   filename: 'bundle-stats.html',
+      //   open: true,
+      //   gzipSize: true,
+      //   brotliSize: true,
+      // }),
+    ],
     build: {
       rollupOptions: {
         input: {

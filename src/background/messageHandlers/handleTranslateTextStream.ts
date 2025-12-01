@@ -3,6 +3,7 @@ import {
   isTranslateTextStreamMessage,
   streamingDoneMessage,
 } from 'core/chromeMessages/messages';
+import { trackTranslateText } from 'core/lib/amplitude/amplitude';
 import { apiTranslateTextStream, ResponseErrorJSON, type TranslateTextErrorChunk } from 'core/lib/apiClient';
 import { SOMETHING_WENT_WRONG } from 'core/lib/utils/consts';
 
@@ -29,6 +30,8 @@ export const handleTranslateTextStream = (params: Params) => {
     }
 
     try {
+      trackTranslateText(message.payload.text.length, message.payload.targetLanguage);
+
       const reader = await apiTranslateTextStream({
         text: message.payload.text,
         targetLanguage: message.payload.targetLanguage,

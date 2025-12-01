@@ -1,4 +1,5 @@
 import type { TranslateWordMessage } from 'core/chromeMessages/messages';
+import { trackTranslateWord } from 'core/lib/amplitude/amplitude';
 import { apiTranslateWord, type TranslateWordParams } from 'core/lib/apiClient';
 
 import { apiErrorHandler } from './apiErrorHandler';
@@ -10,6 +11,8 @@ export const handleTranslateWord: ExtensionMessageHandler<TranslateWordMessage> 
   sendResponse,
 ) => {
   try {
+    trackTranslateWord(message.payload.word.length, message.payload.targetLanguage);
+
     const p: TranslateWordParams = {
       word: message.payload.word,
       targetLanguage: message.payload.targetLanguage,

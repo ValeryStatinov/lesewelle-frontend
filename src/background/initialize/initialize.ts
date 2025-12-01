@@ -1,5 +1,5 @@
 import { type ActivateExtensionWidgetMessage, ExtensionMessageType } from 'core/chromeMessages/messages';
-import { initAmplitude, trackExtensionInstalled } from 'core/lib/amplitude/amplitude';
+import { initAmplitude, trackExtensionActivated, trackExtensionInstalled } from 'core/lib/amplitude/amplitude';
 import { getDeviceId } from 'core/lib/apiClient';
 
 import { initApiClient } from './initApiClient';
@@ -29,9 +29,16 @@ export const initialize = async () => {
     };
 
     void chrome.tabs.sendMessage(tab.id, message);
+    trackExtensionActivated();
   });
 
-  const deviceId = await getDeviceId();
+  let deviceId = 'Not initialized';
+  try {
+    deviceId = await getDeviceId();
+  } catch (error) {
+    console.error('Error getting device id', error);
+    deviceId = 'Not set due to error';
+  }
   const amplitudeApiKey = import.meta.env.VITE_AMPLITUDE_API_KEY;
   const appVersion = EXT_VERSION;
 

@@ -1,11 +1,13 @@
 import {
   type ExtensionMessage,
   isAnalyzeTextDeMessage,
+  isTrackAnalyticsMessage,
   isTranslateTextPortName,
   isTranslateWordMessage,
   PortNameType,
 } from 'core/chromeMessages/messages';
 import { handleAnalyzeTextDe } from 'background/messageHandlers/handleAnalyzeTextDe';
+import { handleTrackAnalytics } from 'background/messageHandlers/handleTrackAnalytics';
 import { handleTranslateTextStream } from 'background/messageHandlers/handleTranslateTextStream';
 import { handleTranslateWord } from 'background/messageHandlers/handleTranslateWord';
 
@@ -19,6 +21,12 @@ export const registerMessageListeners = () => {
 
     if (isTranslateWordMessage(message)) {
       void handleTranslateWord(message, sender, sendResponse);
+
+      return true;
+    }
+
+    if (isTrackAnalyticsMessage(message)) {
+      void handleTrackAnalytics(message, sender, sendResponse);
 
       return true;
     }

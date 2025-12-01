@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 
+import { trackAddToDictionary } from 'core/lib/amplitude/contentScriptTrackers';
 import { WordTranslation } from 'core/lib/features/WordTranslation/WordTranslation';
 import { BottomSheet, type BottomSheetProps } from 'core/lib/ui/molecules/BottomSheet/BottomSheet';
 import { Animator } from 'core/lib/ui/organisms/Animator/Animator';
@@ -22,6 +23,11 @@ const WordTranslationBottomSheet = (props: TranslateWordBottimSheetProps) => {
 
   const { translationsMap, loading, error } = useWordTranslations();
 
+  const handleAddToDictionary = (lemma: string, translations: string[]) => {
+    onAddToDictionary(lemma, translations);
+    trackAddToDictionary(lemma.length, translations.length);
+  };
+
   return (
     <BottomSheet className={cn('p-3', className)} onAnimationEnd={onAnimationEnd} onTransitionEnd={onTransitionEnd}>
       <WordTranslation
@@ -30,7 +36,7 @@ const WordTranslationBottomSheet = (props: TranslateWordBottimSheetProps) => {
         error={error}
         useDictionary={useDictionary}
         onClose={onClose}
-        onAddToDictionary={onAddToDictionary}
+        onAddToDictionary={handleAddToDictionary}
       />
     </BottomSheet>
   );

@@ -43,6 +43,7 @@ export default defineConfig([
       '@typescript-eslint/no-unnecessary-condition': 'off',
       '@typescript-eslint/no-misused-promises': 'off',
       '@typescript-eslint/no-dynamic-delete': 'off',
+      '@typescript-eslint/require-await': 'off',
       'better-tailwindcss/no-unregistered-classes': ['warn', { detectComponentClasses: true }],
       'simple-import-sort/imports': [
         'warn',

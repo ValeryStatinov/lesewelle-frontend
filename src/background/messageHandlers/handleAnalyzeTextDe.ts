@@ -1,4 +1,5 @@
 import type { AnalyzeTextDeMessage } from 'core/chromeMessages/messages';
+import { trackAnalyzeDeText } from 'core/lib/amplitude/amplitude';
 import { type AnalyzeDeParams, apiAnalyzeDe } from 'core/lib/apiClient';
 
 import { apiErrorHandler } from './apiErrorHandler';
@@ -10,6 +11,8 @@ export const handleAnalyzeTextDe: ExtensionMessageHandler<AnalyzeTextDeMessage> 
   sendResponse,
 ) => {
   try {
+    trackAnalyzeDeText(message.payload.text.length);
+
     const p: AnalyzeDeParams = {
       text: message.payload.text,
     };

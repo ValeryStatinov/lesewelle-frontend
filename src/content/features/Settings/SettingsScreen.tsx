@@ -1,5 +1,11 @@
 import { useSnapshot } from 'valtio';
 
+import {
+  trackChangeFullTextTranslationEnabled,
+  trackChangeTargetLanguage,
+  trackOpenSettings,
+} from 'core/lib/amplitude/contentScriptTrackers';
+import { useTrackOpen } from 'core/lib/amplitude/useTrackOpen';
 import { Settings } from 'core/lib/features/Settings/Settings';
 import { screensState } from 'core/lib/state/screensState';
 import type { TargetLanguage } from 'core/lib/types/languages';
@@ -18,13 +24,25 @@ const SettingsScreen = (props: ScreenProps & OwnProps) => {
   const { className, onAnimationEnd, onTransitionEnd, onChangeFullTextTranslationEnabled, onChangeTargetLanguage } =
     props;
 
+  useTrackOpen(trackOpenSettings);
+
+  const handleChangeTargetLanguage = (targetLanguage: TargetLanguage) => {
+    onChangeTargetLanguage(targetLanguage);
+    trackChangeTargetLanguage(targetLanguage);
+  };
+
+  const handleChangeFullTextTranslationEnabled = (enabled: boolean) => {
+    onChangeFullTextTranslationEnabled(enabled);
+    trackChangeFullTextTranslationEnabled(enabled);
+  };
+
   return (
     <Screen className={cn('p-3 pt-0', className)} onAnimationEnd={onAnimationEnd} onTransitionEnd={onTransitionEnd}>
       <Separator />
       <Settings
         className='mt-2'
-        onChangeFullTextTranslationEnabled={onChangeFullTextTranslationEnabled}
-        onChangeTargetLanguage={onChangeTargetLanguage}
+        onChangeFullTextTranslationEnabled={handleChangeFullTextTranslationEnabled}
+        onChangeTargetLanguage={handleChangeTargetLanguage}
       />
     </Screen>
   );
