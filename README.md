@@ -18,3 +18,4 @@ yarn version --major
 ```
 
 2) Run `yarn build`
+3) Run `zip -r extension.zip dist/`
