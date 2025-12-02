@@ -104,7 +104,7 @@ describe('HttpClient', () => {
     headers.set('Authorization', `Bearer ${token}`);
     headers.set('X-Client-Type', 'extension');
 
-    const reader = await realHttpClient.postStream('/api/nlp/translate/text/stream', {
+    const reader = await realHttpClient.postStream('/api/stream/nlp/translate/text', {
       body: JSON.stringify({
         text: 'Ich liebe dich',
         targetLanguage: 'en',

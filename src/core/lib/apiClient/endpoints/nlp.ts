@@ -53,7 +53,7 @@ export const apiTranslateTextStream = async (params: TranslateTextParams) => {
   const { signal, ...restParams } = params;
 
   // this endpoint streams jsons TranslateTextResponseChunk separated by new lines (golang json encoder inserts new lines)
-  const reader = await _apiClient.postStream('/api/nlp/translate/text/stream', {
+  const reader = await _apiClient.postStream('/api/stream/nlp/translate/text', {
     body: JSON.stringify(restParams),
     signal,
   });
