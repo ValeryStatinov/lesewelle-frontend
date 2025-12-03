@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Lesewelle Extension",
+  "name": "Lesewelle",
   "description": "Lesewelle extension to analyze German text and get translations",
   "version": "0.0.1",
   "commands": {
