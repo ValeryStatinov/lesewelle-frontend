@@ -19,3 +19,9 @@ export const setGroupsMap = (groupsMap: TokensGroupsMap) => {
 export const setSelectedRootToken = (selectedRootToken: UIToken | undefined) => {
   interactiveTranslationState.selectedRootToken = selectedRootToken;
 };
+
+export const resetInteractiveTranslationState = () => {
+  interactiveTranslationState.uiTokens = [];
+  interactiveTranslationState.groupsMap = {};
+  interactiveTranslationState.selectedRootToken = undefined;
+};

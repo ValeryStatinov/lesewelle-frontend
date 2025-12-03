@@ -18,4 +18,9 @@ yarn version --major
 ```
 
 2) Run `yarn build`
-3) Run `zip -r extension.zip dist/`
+3) Run 
+```
+cd dist
+zip -r ../extension.zip .
+```
+4) upload created `extension.zip` to chrome web store

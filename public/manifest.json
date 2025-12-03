@@ -34,7 +34,6 @@
   ],
   "permissions": [
     "activeTab",
-    "tabs",
     "storage",
     "commands"
   ],

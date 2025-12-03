@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSnapshot } from 'valtio';
 
 import { sendAnalyzeTextDeMessage, sendTranslateWordMessage } from 'core/chromeMessages/messages';
@@ -7,7 +7,11 @@ import { useTranslatedTextExt } from 'core/lib/features/InteractiveTranslation/u
 import { createLoadWordTranslationsHook } from 'core/lib/features/WordTranslation/useLoadWordTranslations';
 import { AnimatedWordTranslationBottomSheet } from 'core/lib/features/WordTranslation/WordTranslationBottomSheet';
 import { appState } from 'core/lib/state/appState';
-import { interactiveTranslationState, setSelectedRootToken } from 'core/lib/state/interactiveTranslationState';
+import {
+  interactiveTranslationState,
+  resetInteractiveTranslationState,
+  setSelectedRootToken,
+} from 'core/lib/state/interactiveTranslationState';
 import { noop } from 'core/lib/utils/noop';
 import { useEventCallback } from 'core/lib/utils/useEventCallback';
 import { AnimatedDictionaryScreen } from 'content/features/DictionaryScreen/DictionaryScreen';
@@ -50,6 +54,14 @@ export const AppShell = () => {
   const handleDictionaryEntryClick = useEventCallback((lemma: string) => {
     setSelectedLemma(lemma);
   });
+
+  useEffect(() => {
+    if (isWidgetActive) {
+      return;
+    }
+
+    resetInteractiveTranslationState();
+  }, [isWidgetActive]);
 
   if (!isWidgetActive) {
     return null;
