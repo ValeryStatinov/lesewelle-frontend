@@ -45,7 +45,7 @@ export default defineConfig(({ mode }) => {
       react(),
       tsconfigPaths(),
       svgr(),
-      manifestPlugin(mode),
+      // manifestPlugin(mode),
       // visualizer({
       //   filename: 'bundle-stats.html',
       //   open: true,

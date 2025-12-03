@@ -10,7 +10,7 @@
     "clean": "rm -rf dist",
     "build:content": "vite build -m production --config vite.config.content.ts",
     "build:background": "vite build -m production --config vite.config.background.ts",
-    "build": "yarn clean && tsc -b && yarn build:content && yarn build:background",
+    "build": "yarn clean && tsc -b && yarn build:background && yarn build:content",
     "release": "yarn build && cd dist && zip -r ../extension.zip . && cd ..",
     "lint": "eslint ."
   },
