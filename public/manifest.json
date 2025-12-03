@@ -24,18 +24,12 @@
     "service_worker": "background.js",
     "type": "module"
   },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"],
-      "run_at": "document_idle",
-      "type": "module"
-    }
-  ],
   "permissions": [
     "activeTab",
     "storage",
-    "commands"
+    "commands",
+    "scripting",
+    "contextMenus"
   ],
   "host_permissions": [],
   "icons": {

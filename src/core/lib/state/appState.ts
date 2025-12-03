@@ -3,7 +3,7 @@ import { proxy } from 'valtio';
 import { TargetLanguage } from '../types/languages';
 
 export const appState = proxy({
-  isWidgetActive: import.meta.env.MODE === 'development' ? true : false,
+  isWidgetActive: true,
   isTextTranslationEnabled: true,
   targetTranslationLanguage: TargetLanguage.ENGLISH,
 });

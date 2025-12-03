@@ -4,6 +4,7 @@ import type { EventOptions } from '@amplitude/analytics-browser/lib/esm/types';
 import type { TargetLanguage } from 'core/lib/types/languages';
 
 import { AnalyticsEvents } from './events';
+import { hashId } from './hashId';
 
 type PlatformType = 'extension' | 'frontend';
 
@@ -28,7 +29,9 @@ export const initAmplitude = async (apiKey: string, deviceId: string, appVersion
   _appVersion = appVersion;
   _platform = platform;
 
-  setDeviceId(deviceId);
+  const hashedDeviceId = await hashId(deviceId);
+
+  setDeviceId(hashedDeviceId);
 };
 
 const isAmplitudeInitialized = () => {
