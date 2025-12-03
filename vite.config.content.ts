@@ -13,6 +13,9 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf-8')) as Record<string, unknown>;
 const EXT_VERSION = packageJson.version as string;
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const manifestPlugin = (mode: string) => {
   return {
     name: 'manifest-plugin',
@@ -38,6 +41,9 @@ const manifestPlugin = (mode: string) => {
 };
 
 // https://vite.dev/config/
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default defineConfig(({ mode }) => {
   return {
     plugins: [
