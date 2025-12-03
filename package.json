@@ -11,6 +11,7 @@
     "build:content": "vite build -m production --config vite.config.content.ts",
     "build:background": "vite build -m production --config vite.config.background.ts",
     "build": "yarn clean && tsc -b && yarn build:content && yarn build:background",
+    "release": "yarn build && cd dist && zip -r ../extension.zip . && cd ..",
     "lint": "eslint ."
   },
   "dependencies": {
