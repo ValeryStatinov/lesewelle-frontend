@@ -8,9 +8,42 @@ import { hashId } from './hashId';
 
 type PlatformType = 'extension' | 'frontend';
 
+type EventQueueItem = {
+  event: string;
+  properties?: Record<string, unknown>;
+  options?: Omit<EventOptions, 'device_id' | 'app_version' | 'platform'>;
+};
+
 let _initialized = false;
 let _appVersion: string = 'development';
 let _platform: PlatformType;
+
+const eventsQueue: EventQueueItem[] = [];
+
+const isAmplitudeInitialized = () => {
+  return _initialized;
+};
+
+// should only be used in background script, in handleTrackAnalytics callback
+export const trackEvent = (
+  event: string,
+  properties?: Record<string, unknown>,
+  options?: Omit<EventOptions, 'device_id' | 'app_version' | 'platform'>,
+) => {
+  if (!isAmplitudeInitialized()) {
+    eventsQueue.push({ event, properties, options });
+
+    return;
+  }
+
+  const eventOptions: EventOptions = {
+    ...options,
+    app_version: _appVersion,
+    platform: _platform,
+  };
+
+  track(event, properties, eventOptions);
+};
 
 export const initAmplitude = async (apiKey: string, deviceId: string, appVersion: string, platform: PlatformType) => {
   const initPromise = init(apiKey, {
@@ -32,31 +65,10 @@ export const initAmplitude = async (apiKey: string, deviceId: string, appVersion
   const hashedDeviceId = await hashId(deviceId);
 
   setDeviceId(hashedDeviceId);
-};
 
-const isAmplitudeInitialized = () => {
-  return _initialized;
-};
-
-// should only be used in background script, in handleTrackAnalytics callback
-export const trackEvent = (
-  event: string,
-  properties?: Record<string, unknown>,
-  options?: Omit<EventOptions, 'device_id' | 'app_version' | 'platform'>,
-) => {
-  if (!isAmplitudeInitialized()) {
-    console.warn('Amplitude not initialized, skipping event tracking');
-
-    return;
+  for (const item of eventsQueue) {
+    trackEvent(item.event, item.properties, item.options);
   }
-
-  const eventOptions: EventOptions = {
-    ...options,
-    app_version: _appVersion,
-    platform: _platform,
-  };
-
-  track(event, properties, eventOptions);
 };
 
 export const trackExtensionInstalled = (reason: string) => {

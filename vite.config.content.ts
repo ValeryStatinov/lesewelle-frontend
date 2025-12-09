@@ -41,9 +41,6 @@ const manifestPlugin = (mode: string) => {
 };
 
 // https://vite.dev/config/
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default defineConfig(({ mode }) => {
   return {
     plugins: [
@@ -74,7 +71,7 @@ export default defineConfig(({ mode }) => {
       emptyOutDir: false,
     },
     define: {
-      EXT_VERSION: JSON.stringify(EXT_VERSION),
+      EXT_VERSION: mode === 'development' ? JSON.stringify(EXT_VERSION + '-dev') : JSON.stringify(EXT_VERSION),
     },
   };
 });

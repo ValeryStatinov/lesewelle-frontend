@@ -7,7 +7,7 @@ const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf-8')) as Re
 const EXT_VERSION = packageJson.version as string;
 
 // https://vite.dev/config/
-export default defineConfig(() => {
+export default defineConfig(({ mode }) => {
   return {
     plugins: [tsconfigPaths()],
     build: {
@@ -24,7 +24,7 @@ export default defineConfig(() => {
       emptyOutDir: false,
     },
     define: {
-      EXT_VERSION: JSON.stringify(EXT_VERSION),
+      EXT_VERSION: mode === 'development' ? JSON.stringify(EXT_VERSION + '-dev') : JSON.stringify(EXT_VERSION),
     },
   };
 });
