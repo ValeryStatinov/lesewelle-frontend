@@ -79,7 +79,6 @@ describe('HttpClient', () => {
     const textDecoder = new TextDecoder();
     let result = '';
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     while (true) {
       const chunk = await reader.read();
       if (chunk.done) {
@@ -113,7 +112,6 @@ describe('HttpClient', () => {
     });
 
     const textDecoder = new TextDecoder();
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     while (true) {
       const chunk = await reader.read();
       if (chunk.done) {
