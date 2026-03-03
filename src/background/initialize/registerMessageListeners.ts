@@ -1,15 +1,18 @@
 import {
+  type ApiErrorResponseMessage,
   type ExtensionMessage,
   isAnalyzeTextDeMessage,
   isTrackAnalyticsMessage,
   isTranslateTextPortName,
   isTranslateWordMessage,
+  isWordsLookupMessage,
   PortNameType,
 } from 'core/chromeMessages/messages';
 import { handleAnalyzeTextDe } from 'background/messageHandlers/handleAnalyzeTextDe';
 import { handleTrackAnalytics } from 'background/messageHandlers/handleTrackAnalytics';
 import { handleTranslateTextStream } from 'background/messageHandlers/handleTranslateTextStream';
 import { handleTranslateWord } from 'background/messageHandlers/handleTranslateWord';
+import { handleWordsLookup } from 'background/messageHandlers/handleWordsLookup';
 
 export const registerMessageListeners = () => {
   chrome.runtime.onMessage.addListener((message: ExtensionMessage, sender, sendResponse) => {
@@ -31,7 +34,20 @@ export const registerMessageListeners = () => {
       return true;
     }
 
-    console.error('Unknown message', message);
+    if (isWordsLookupMessage(message)) {
+      void handleWordsLookup(message, sender, sendResponse);
+
+      return true;
+    }
+
+    const responseMessage: ApiErrorResponseMessage = {
+      error: {
+        name: 'UnknownMessage',
+        message: `Unknown message: ${message.type}`,
+      },
+    };
+    sendResponse(responseMessage);
+    return true;
   });
 
   chrome.runtime.onConnect.addListener((port) => {

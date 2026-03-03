@@ -5,6 +5,7 @@ import { JsonStreamReader } from '../jsonStreamReader';
 import { _apiClient } from '../registerApiClient';
 
 import type { TokensGroupsMap, UIToken } from './types/tokens';
+import type { Word, WordPOSType } from './types/words';
 
 export type AnalyzeDeParams = {
   text: string;
@@ -60,4 +61,23 @@ export const apiTranslateTextStream = async (params: TranslateTextParams) => {
   const jsonStreamReader = new JsonStreamReader<TranslateTextResponseChunk>(reader);
 
   return jsonStreamReader;
+};
+
+export type WordsLookupParams = {
+  word: string;
+  targetLanguage: TargetLanguage;
+  pos?: WordPOSType;
+};
+
+export type WordsLookupReturn = {
+  wordByLemma: Word;
+  wordsByForms: Word[];
+};
+
+export const apiWordsLookup = async (params: WordsLookupParams) => {
+  const response = await _apiClient.post<WordsLookupReturn>('/api/nlp/words/lookup', {
+    body: JSON.stringify(params),
+  });
+
+  return response;
 };

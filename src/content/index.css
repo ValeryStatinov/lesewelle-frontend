@@ -18,6 +18,29 @@
   --text-7xl: 4.5em;
   --text-8xl: 6em;
   --text-9xl: 8em;
+
+  /* https://tailwindcss.com/docs/animation#customizing-your-theme */
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+
+  --animate-accordion-down: accordion-down .5s ease-out; 
+
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+
+  --animate-accordion-up: accordion-up .5s ease-out; 
 }
 
 :root,
