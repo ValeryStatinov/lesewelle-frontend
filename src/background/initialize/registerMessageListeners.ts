@@ -4,26 +4,18 @@ import {
   isAnalyzeTextDeMessage,
   isTrackAnalyticsMessage,
   isTranslateTextPortName,
-  isTranslateWordMessage,
   isWordsLookupMessage,
   PortNameType,
 } from 'core/chromeMessages/messages';
 import { handleAnalyzeTextDe } from 'background/messageHandlers/handleAnalyzeTextDe';
 import { handleTrackAnalytics } from 'background/messageHandlers/handleTrackAnalytics';
 import { handleTranslateTextStream } from 'background/messageHandlers/handleTranslateTextStream';
-import { handleTranslateWord } from 'background/messageHandlers/handleTranslateWord';
 import { handleWordsLookup } from 'background/messageHandlers/handleWordsLookup';
 
 export const registerMessageListeners = () => {
   chrome.runtime.onMessage.addListener((message: ExtensionMessage, sender, sendResponse) => {
     if (isAnalyzeTextDeMessage(message)) {
       void handleAnalyzeTextDe(message, sender, sendResponse);
-
-      return true;
-    }
-
-    if (isTranslateWordMessage(message)) {
-      void handleTranslateWord(message, sender, sendResponse);
 
       return true;
     }

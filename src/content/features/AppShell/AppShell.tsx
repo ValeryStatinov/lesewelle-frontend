@@ -1,18 +1,17 @@
 import { useEffect, useRef } from 'react';
 import { useSnapshot } from 'valtio';
 
-import { sendAnalyzeTextDeMessage, sendTranslateWordMessage } from 'core/chromeMessages/messages';
+import { sendAnalyzeTextDeMessage, sendWordsLookupMessage } from 'core/chromeMessages/messages';
 import { InteractiveTranslation } from 'core/lib/features/InteractiveTranslation/InteractiveTranslation';
 import { useTranslatedTextExt } from 'core/lib/features/InteractiveTranslation/useTranslatedTextExt';
-import { createLoadWordTranslationsHook } from 'core/lib/features/WordTranslation/useLoadWordTranslations';
-import { AnimatedWordTranslationBottomSheet } from 'core/lib/features/WordTranslation/WordTranslationBottomSheet';
+import { createLoadWordsDefinitionsHook } from 'core/lib/features/WordDefinition/useLoadWordsDefinitions';
+import { AnimatedWordDefinitionBottomSheet } from 'core/lib/features/WordDefinition/WordDefinitionBottomSheet';
 import { appState } from 'core/lib/state/appState';
 import {
   interactiveTranslationState,
   resetInteractiveTranslationState,
   setSelectedRootToken,
 } from 'core/lib/state/interactiveTranslationState';
-import { noop } from 'core/lib/utils/noop';
 import { useEventCallback } from 'core/lib/utils/useEventCallback';
 import { AnimatedDictionaryScreen } from 'content/features/DictionaryScreen/DictionaryScreen';
 import { AnimatedSettingsScreen } from 'content/features/Settings/SettingsScreen';
@@ -28,7 +27,7 @@ import {
 import { Header } from './Header';
 import { useDraggableWidget } from './useDraggableWidget';
 
-const { useLoadWordTranslations } = createLoadWordTranslationsHook(sendTranslateWordMessage);
+const { useLoadWordsDefinitions } = createLoadWordsDefinitionsHook(sendWordsLookupMessage);
 
 export const AppShell = () => {
   const dragHandleRef = useRef<HTMLButtonElement | null>(null);
@@ -43,7 +42,7 @@ export const AppShell = () => {
     isWidgetActive,
   });
 
-  const handleCloseLoadedWordTranslations = useEventCallback(() => {
+  const handleCloseLoadedWordDefinition = useEventCallback(() => {
     setSelectedRootToken(undefined);
   });
 
@@ -85,12 +84,11 @@ export const AppShell = () => {
           isTextTranslationEnabled={isTextTranslationEnabled}
         />
 
-        <AnimatedWordTranslationBottomSheet
+        <AnimatedWordDefinitionBottomSheet
           show={!!selectedRootToken}
-          useDictionary={useDictionarySnapshot}
-          useWordTranslations={useLoadWordTranslations}
-          onClose={handleCloseLoadedWordTranslations}
-          onAddToDictionary={addToDictionary}
+          useLoadWordsDefinitions={useLoadWordsDefinitions}
+          onClose={handleCloseLoadedWordDefinition}
+          // onAddToDictionary={addToDictionary}
         />
 
         <AnimatedSettingsScreen
@@ -103,13 +101,13 @@ export const AppShell = () => {
           onDictionaryEntryClick={handleDictionaryEntryClick}
         />
 
-        <AnimatedWordTranslationBottomSheet
+        {/* <AnimatedWordTranslationBottomSheet
           show={!!selectedLemma}
           useDictionary={useDictionarySnapshot}
           useWordTranslations={useWordTranslationsDictionary}
           onClose={handleCloseDictionaryWordTranslations}
           onAddToDictionary={noop}
-        />
+        /> */}
       </main>
     </div>
   );

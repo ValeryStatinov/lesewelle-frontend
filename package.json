@@ -12,7 +12,8 @@
     "build:background": "vite build -m production --config vite.config.background.ts",
     "build": "yarn clean && tsc -b && yarn build:background && yarn build:content",
     "release": "yarn build && cd dist && zip -r ../extension.zip . && cd ..",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "vitest --config vite.config.background.ts"
   },
   "dependencies": {
     "@amplitude/analytics-browser": "2.30.0",

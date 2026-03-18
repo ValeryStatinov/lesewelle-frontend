@@ -10,7 +10,6 @@ import type { TargetLanguage } from 'core/lib/types/languages';
 
 export enum ExtensionMessageType {
   ANALYZE_TEXT_DE = 'ANALYZE_TEXT_DE',
-  GET_WORD_TRANSLATION = 'GET_WORD_TRANSLATION',
   ACTIVATE_EXTENSION_WIDGET = 'ACTIVATE_EXTENSION_WIDGET',
   TRANSLATE_TEXT_STREAM = 'TRANSLATE_TEXT_STREAM',
   TRACK_ANALYTICS = 'TRACK_ANALYTICS',
@@ -79,37 +78,6 @@ export const isActivateExtensionWidgetMessage = (
   message: ExtensionMessage,
 ): message is ActivateExtensionWidgetMessage => {
   return message.type === ExtensionMessageType.ACTIVATE_EXTENSION_WIDGET;
-};
-
-export type TranslateWordMessage = {
-  type: ExtensionMessageType.GET_WORD_TRANSLATION;
-  payload: {
-    word: string;
-    targetLanguage: TargetLanguage;
-  };
-};
-
-export const sendTranslateWordMessage = async (word: string, targetLanguage: TargetLanguage) => {
-  const message: TranslateWordMessage = {
-    type: ExtensionMessageType.GET_WORD_TRANSLATION,
-    payload: {
-      word,
-      targetLanguage,
-    },
-  };
-
-  const response = await chrome.runtime.sendMessage<
-    TranslateWordMessage,
-    TranslateWordResponse | ApiErrorResponseMessage
-  >(message);
-
-  throwOnApiError(response);
-
-  return response;
-};
-
-export const isTranslateWordMessage = (message: ExtensionMessage): message is TranslateWordMessage => {
-  return message.type === ExtensionMessageType.GET_WORD_TRANSLATION;
 };
 
 export type TranslateTextStreamMessage = {
