@@ -1,3 +1,5 @@
+import type { WordPOSType } from './words';
+
 export type TokensGroupId = string;
 
 export enum TokensGroupType {
@@ -21,7 +23,7 @@ export type UIToken = {
   id: UITokenId;
   text: string;
   lemma: string;
-  pos: string;
+  pos: WordPOSType;
   tag: string;
   dep: string;
   groupIds: TokensGroupId[];

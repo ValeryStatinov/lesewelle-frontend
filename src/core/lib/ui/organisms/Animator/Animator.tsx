@@ -18,8 +18,6 @@ type Props<T> = {
   show: boolean;
   onEnterClassName: string;
   onExitClassName: string;
-  // data: T;
-  // Component: FunctionComponent<AnimatedComponentProps<T>>;
   className?: string;
 } & (IsEmptyObject<T> extends true
   ? { Component: FunctionComponent<AnimatedComponentRequiredProps> }

@@ -86,7 +86,3 @@ export const trackTranslateText = (textLength: number, targetLanguage: TargetLan
 export const trackAnalyzeDeText = (textLength: number) => {
   trackEvent(AnalyticsEvents.ANALYZE_DE_TEXT, { textLength });
 };
-
-export const trackTranslateWord = (wordLength: number, targetLanguage: TargetLanguage) => {
-  trackEvent(AnalyticsEvents.TRANSLATE_WORD, { wordLength, targetLanguage });
-};

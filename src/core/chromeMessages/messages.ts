@@ -1,13 +1,19 @@
 import type { AnalyticsEvents } from 'core/lib/amplitude/events';
-import { type AnalyzeDeResponse, ResponseErrorJSON, type TranslateWordResponse } from 'core/lib/apiClient';
+import {
+  type AnalyzeDeResponse,
+  ResponseErrorJSON,
+  type TranslateWordResponse,
+  type WordsLookupReturn,
+} from 'core/lib/apiClient';
+import type { WordPOSType } from 'core/lib/apiClient/endpoints/types/words';
 import type { TargetLanguage } from 'core/lib/types/languages';
 
 export enum ExtensionMessageType {
   ANALYZE_TEXT_DE = 'ANALYZE_TEXT_DE',
-  GET_WORD_TRANSLATION = 'GET_WORD_TRANSLATION',
   ACTIVATE_EXTENSION_WIDGET = 'ACTIVATE_EXTENSION_WIDGET',
   TRANSLATE_TEXT_STREAM = 'TRANSLATE_TEXT_STREAM',
   TRACK_ANALYTICS = 'TRACK_ANALYTICS',
+  WORDS_LOOKUP = 'WORDS_LOOKUP',
 }
 
 export type ExtensionMessage = {
@@ -23,6 +29,10 @@ export type ApiErrorResponseMessage = {
 };
 
 function throwOnApiError<T extends object>(response: T | ApiErrorResponseMessage): asserts response is T {
+  if (!response) {
+    throw new Error('response from background script is undefined');
+  }
+
   if ('error' in response) {
     if (response.error.code) {
       throw new ResponseErrorJSON(response.error.message, response.error.code);
@@ -68,37 +78,6 @@ export const isActivateExtensionWidgetMessage = (
   message: ExtensionMessage,
 ): message is ActivateExtensionWidgetMessage => {
   return message.type === ExtensionMessageType.ACTIVATE_EXTENSION_WIDGET;
-};
-
-export type TranslateWordMessage = {
-  type: ExtensionMessageType.GET_WORD_TRANSLATION;
-  payload: {
-    word: string;
-    targetLanguage: TargetLanguage;
-  };
-};
-
-export const sendTranslateWordMessage = async (word: string, targetLanguage: TargetLanguage) => {
-  const message: TranslateWordMessage = {
-    type: ExtensionMessageType.GET_WORD_TRANSLATION,
-    payload: {
-      word,
-      targetLanguage,
-    },
-  };
-
-  const response = await chrome.runtime.sendMessage<
-    TranslateWordMessage,
-    TranslateWordResponse | ApiErrorResponseMessage
-  >(message);
-
-  throwOnApiError(response);
-
-  return response;
-};
-
-export const isTranslateWordMessage = (message: ExtensionMessage): message is TranslateWordMessage => {
-  return message.type === ExtensionMessageType.GET_WORD_TRANSLATION;
 };
 
 export type TranslateTextStreamMessage = {
@@ -149,4 +128,36 @@ export const sendTrackAnalyticsMessage = async (type: AnalyticsEvents, propertie
   };
 
   await chrome.runtime.sendMessage<TrackAnalyticsMessage>(message);
+};
+
+export type WordsLookupMessage = {
+  type: ExtensionMessageType.WORDS_LOOKUP;
+  payload: {
+    word: string;
+    targetLanguage: TargetLanguage;
+    pos?: WordPOSType;
+  };
+};
+
+export const sendWordsLookupMessage = async (word: string, targetLanguage: TargetLanguage, pos?: WordPOSType) => {
+  const message: WordsLookupMessage = {
+    type: ExtensionMessageType.WORDS_LOOKUP,
+    payload: {
+      word,
+      targetLanguage,
+      pos,
+    },
+  };
+
+  const response = await chrome.runtime.sendMessage<WordsLookupMessage, WordsLookupReturn | ApiErrorResponseMessage>(
+    message,
+  );
+
+  throwOnApiError(response);
+
+  return response;
+};
+
+export const isWordsLookupMessage = (message: ExtensionMessage): message is WordsLookupMessage => {
+  return message.type === ExtensionMessageType.WORDS_LOOKUP;
 };
