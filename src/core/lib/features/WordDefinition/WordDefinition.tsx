@@ -19,7 +19,12 @@ export const WordDefinition = (props: Props) => {
   return (
     <div className='flex flex-col gap-5'>
       {wordByLemma.wordPOSs.map((pos) => (
-        <WordPOSView wordPOS={pos} lemma={wordByLemma.word} isSinglePOS={wordByLemma.wordPOSs.length === 1} />
+        <WordPOSView
+          wordPOS={pos}
+          lemma={wordByLemma.word}
+          isSinglePOS={wordByLemma.wordPOSs.length === 1}
+          key={pos.id}
+        />
       ))}
 
       {wordsByForms.length > 0 && (
@@ -34,7 +39,7 @@ export const WordDefinition = (props: Props) => {
                   {wordsByForms.map((w) => (
                     <div key={w.id}>
                       {w.wordPOSs.map((pos) => (
-                        <WordPOSView wordPOS={pos} lemma={w.word} isSinglePOS={w.wordPOSs.length === 1} />
+                        <WordPOSView wordPOS={pos} lemma={w.word} isSinglePOS={w.wordPOSs.length === 1} key={pos.id} />
                       ))}
                     </div>
                   ))}

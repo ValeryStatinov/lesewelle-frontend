@@ -1,9 +1,4 @@
-import type {
-  NounProperties,
-  VerbProperties,
-  WordPOS,
-  WordPOSTypeExtended,
-} from 'core/lib/apiClient/endpoints/types/words';
+import type { WordPOS, WordPOSTypeExtended } from 'core/lib/apiClient/endpoints/types/words';
 import {
   Accordion,
   AccordionContent,
@@ -54,18 +49,19 @@ export const WordPOSView = (props: Props) => {
     ? `${humanReadableWordPOSType[wordPOS.posType]} (${wordPOS.nounProperties.gender})`
     : humanReadableWordPOSType[wordPOS.posType];
 
-  const usageExamplesAndForms = wordPOS.usageExamples.length > 0 && (
+  const usageExamplesAndForms = (
     <div className='flex flex-col gap-2'>
-      {wordPOS.usageExamples.map((example) => (
-        <div
-          key={example.id}
-          className={`max-w-fit border-l-2 border-blue-200 bg-blue-50/50 py-1 pr-4 pl-2 text-sm text-stone-600 italic`}
-        >
-          {example.example}
-        </div>
-      ))}
+      {wordPOS.usageExamples.length > 0 &&
+        wordPOS.usageExamples.map((example) => (
+          <div
+            key={example.id}
+            className={`max-w-fit border-l-2 border-blue-200 bg-blue-50/50 py-1 pr-4 pl-2 text-sm text-stone-600 italic`}
+          >
+            {example.example}
+          </div>
+        ))}
 
-      <WordPOSForms forms={wordPOS.forms} className='mt-4' />
+      {wordPOS.forms.length > 0 && <WordPOSForms forms={wordPOS.forms} className='mt-4' />}
     </div>
   );
 
