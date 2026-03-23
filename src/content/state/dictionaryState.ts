@@ -45,25 +45,3 @@ export const useDictionarySnapshot = () => {
 
   return dictionary;
 };
-
-export const useWordTranslationsDictionary = () => {
-  const dictionary = useDictionarySnapshot();
-  const { selectedLemma } = useSnapshot(dictionaryState);
-  if (!selectedLemma) {
-    return {
-      translationsMap: {},
-      loading: false,
-      error: 'No dictionary entry selected',
-    };
-  }
-
-  const translationsMap = {
-    [selectedLemma]: dictionary[selectedLemma],
-  };
-
-  return {
-    translationsMap,
-    loading: false,
-    error: undefined,
-  };
-};

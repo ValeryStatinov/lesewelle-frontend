@@ -21,7 +21,6 @@ import {
   dictionaryState,
   setSelectedLemma,
   useDictionarySnapshot,
-  useWordTranslationsDictionary,
 } from 'content/state/dictionaryState';
 
 import { Header } from './Header';
@@ -46,7 +45,7 @@ export const AppShell = () => {
     setSelectedRootToken(undefined);
   });
 
-  const handleCloseDictionaryWordTranslations = useEventCallback(() => {
+  const handleCloseDictionaryWordDefinition = useEventCallback(() => {
     setSelectedLemma(undefined);
   });
 
@@ -100,14 +99,6 @@ export const AppShell = () => {
           useDictionary={useDictionarySnapshot}
           onDictionaryEntryClick={handleDictionaryEntryClick}
         />
-
-        {/* <AnimatedWordTranslationBottomSheet
-          show={!!selectedLemma}
-          useDictionary={useDictionarySnapshot}
-          useWordTranslations={useWordTranslationsDictionary}
-          onClose={handleCloseDictionaryWordTranslations}
-          onAddToDictionary={noop}
-        /> */}
       </main>
     </div>
   );

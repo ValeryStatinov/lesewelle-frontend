@@ -45,11 +45,11 @@ const WordDefinitionBottomSheet = (props: WordDefinitionBottimSheetProps) => {
   );
 };
 
-type AnimatedWordTranslationBottomSheetProps = OwnProps & {
+type AnimatedWordDefinitionBottomSheetProps = OwnProps & {
   show: boolean;
 };
 
-export const AnimatedWordDefinitionBottomSheet = (props: AnimatedWordTranslationBottomSheetProps) => {
+export const AnimatedWordDefinitionBottomSheet = (props: AnimatedWordDefinitionBottomSheetProps) => {
   const { useLoadWordsDefinitions, onClose, show } = props;
 
   const dataProp: OwnProps = useMemo(() => ({ useLoadWordsDefinitions, onClose }), [useLoadWordsDefinitions, onClose]);
