@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { BookMarked, BookmarkPlus, BookmarkX } from 'lucide-react';
 import { useSnapshot } from 'valtio';
 
+import { trackAddToDictionary, trackDeleteFromDictionary } from 'core/lib/amplitude/contentScriptTrackers';
 import type { Id } from 'core/lib/apiClient/endpoints/types/basemodel';
-import type { WordPOS, WordPOSTypeExtended } from 'core/lib/apiClient/endpoints/types/words';
+import type { WordPOSTypeExtended, WordPOSWithLemma } from 'core/lib/apiClient/endpoints/types/words';
 import { dictionaryState } from 'core/lib/state/dictionaryState';
 import { Button } from 'core/lib/ui/atoms/Button/Button';
 import {
@@ -19,8 +20,20 @@ import { capitalizeFirstLetter } from 'core/lib/utils/strings';
 
 import { WordPOSForms } from './WordPOSForms';
 
+const iconByAction = {
+  add: <BookmarkPlus />,
+  delete: <BookmarkX stroke='var(--color-red-400)' />,
+  added: <BookMarked stroke='var(--color-blue-700)' />,
+};
+
+const tooltipByAction = {
+  add: 'Add to dictionary',
+  delete: 'Delete from dictionary',
+  added: 'Added to dictionary!',
+};
+
 type Props = {
-  wordPOS: WordPOS;
+  wordPOS: WordPOSWithLemma;
   lemma: string;
   isSinglePOS?: boolean;
   className?: string;
@@ -37,18 +50,6 @@ export const WordPOSView = (props: Props) => {
   const bothProvided = !!(onAddToDictionary && onDeleteFromDictionary);
   const [currentAction, setCurrentAction] = useState<'add' | 'delete' | 'added'>(bothProvided ? 'delete' : 'add');
   const [tooltipOpen, setTooltipOpen] = useState(false);
-
-  const iconByAction = {
-    add: <BookmarkPlus />,
-    delete: <BookmarkX stroke='var(--color-red-400)' />,
-    added: <BookMarked stroke='var(--color-blue-700)' />,
-  };
-
-  const tooltipByAction = {
-    add: 'Add to dictionary',
-    delete: 'Delete from dictionary',
-    added: 'Added to dictionary!',
-  };
 
   const addOrDeleteIcon = iconByAction[currentAction];
   const addOrDeleteTooltip = tooltipByAction[currentAction];
@@ -69,9 +70,13 @@ export const WordPOSView = (props: Props) => {
 
     if (currentAction === 'delete') {
       void onDeleteFromDictionary?.({ setId, wordPOSId: wordPOS.id });
+      trackDeleteFromDictionary(wordPOS);
+
       setCurrentAction('add');
     } else if (currentAction === 'add') {
       void onAddToDictionary?.({ setId, wordPOSId: wordPOS.id });
+      trackAddToDictionary(wordPOS);
+
       setCurrentAction(bothProvided ? 'delete' : 'added');
     }
   };

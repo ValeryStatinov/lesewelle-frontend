@@ -1,4 +1,5 @@
 import { sendTrackAnalyticsMessage } from 'core/chromeMessages/messages';
+import type { WordPOSWithLemma } from 'core/lib/apiClient/endpoints/types/words';
 import type { TargetLanguage } from 'core/lib/types/languages';
 
 import { AnalyticsEvents } from './events';
@@ -21,8 +22,20 @@ export const trackOpenDictionary = () => {
   void sendTrackAnalyticsMessage(AnalyticsEvents.OPEN_DICTIONARY);
 };
 
-export const trackAddToDictionary = (wordLength: number, numTranslations: number) => {
-  void sendTrackAnalyticsMessage(AnalyticsEvents.ADD_TO_DICTIONARY, { wordLength, numTranslations });
+export const trackAddToDictionary = (pos: WordPOSWithLemma) => {
+  void sendTrackAnalyticsMessage(AnalyticsEvents.ADD_TO_DICTIONARY, {
+    lemma: pos.lemma,
+    id: pos.id,
+    posType: pos.posType,
+  });
+};
+
+export const trackDeleteFromDictionary = (pos: WordPOSWithLemma) => {
+  void sendTrackAnalyticsMessage(AnalyticsEvents.DELETE_FROM_DICTIONARY, {
+    lemma: pos.lemma,
+    id: pos.id,
+    posType: pos.posType,
+  });
 };
 
 export const trackStudyWords = () => {
