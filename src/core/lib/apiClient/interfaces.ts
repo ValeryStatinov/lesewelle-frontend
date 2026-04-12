@@ -11,6 +11,7 @@ export type HttpClientRequestParams = WithAbortSignal & {
 export interface HttpClienter {
   get<T>(path: string, params?: HttpClientRequestParams): Promise<T>;
   post<T>(path: string, params?: HttpClientRequestParams): Promise<T>;
+  delete<T>(path: string, params?: HttpClientRequestParams): Promise<T>;
   postStream(path: string, params?: HttpClientRequestParams): Promise<ReadableStreamDefaultReader<ArrayBuffer>>;
 }
 
@@ -22,6 +23,7 @@ export interface AuthManagerer {
 export interface ApiClienter {
   get<T>(path: string, params?: HttpClientRequestParams): Promise<T>;
   post<T>(path: string, params?: HttpClientRequestParams): Promise<T>;
+  delete<T>(path: string, params?: HttpClientRequestParams): Promise<T>;
   postStream(path: string, params?: HttpClientRequestParams): Promise<ReadableStreamDefaultReader<ArrayBuffer>>;
   getDeviceId(): Promise<string>;
 }

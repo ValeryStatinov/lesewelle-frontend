@@ -1,27 +1,31 @@
 import { useEffect, useRef } from 'react';
 import { useSnapshot } from 'valtio';
 
-import { sendAnalyzeTextDeMessage, sendWordsLookupMessage } from 'core/chromeMessages/messages';
+import {
+  sendAddWordPOSToSetMessage,
+  sendAnalyzeTextDeMessage,
+  sendDeleteWordPOSFromSetMessage,
+  sendWordsLookupMessage,
+} from 'core/chromeMessages/messages';
+import type { WordPOSWithLemma } from 'core/lib/apiClient/endpoints/types/words';
+import { useWordPOSSetActionWithReload } from 'core/lib/features/Dictionary/createDictionaryApiCalls';
 import { InteractiveTranslation } from 'core/lib/features/InteractiveTranslation/InteractiveTranslation';
 import { useTranslatedTextExt } from 'core/lib/features/InteractiveTranslation/useTranslatedTextExt';
 import { createLoadWordsDefinitionsHook } from 'core/lib/features/WordDefinition/useLoadWordsDefinitions';
+import { useWordDefinitionFromDictionary } from 'core/lib/features/WordDefinition/useWordDefinitionFromDictionary';
 import { AnimatedWordDefinitionBottomSheet } from 'core/lib/features/WordDefinition/WordDefinitionBottomSheet';
 import { appState } from 'core/lib/state/appState';
+import { dictionaryState, setSelectedDictionaryWordPOS } from 'core/lib/state/dictionaryState';
 import {
   interactiveTranslationState,
   resetInteractiveTranslationState,
   setSelectedRootToken,
 } from 'core/lib/state/interactiveTranslationState';
 import { useEventCallback } from 'core/lib/utils/useEventCallback';
+import { loadSets, loadSetWords } from 'content/features/DictionaryScreen/dictionaryApiCalls';
 import { AnimatedDictionaryScreen } from 'content/features/DictionaryScreen/DictionaryScreen';
 import { AnimatedSettingsScreen } from 'content/features/Settings/SettingsScreen';
 import { setIsTextTranslationEnabledWithPersistence, setTargetLangueageWithPersistence } from 'content/state/appState';
-import {
-  addToDictionary,
-  dictionaryState,
-  setSelectedLemma,
-  useDictionarySnapshot,
-} from 'content/state/dictionaryState';
 
 import { Header } from './Header';
 import { useDraggableWidget } from './useDraggableWidget';
@@ -33,7 +37,25 @@ export const AppShell = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const { isWidgetActive, isTextTranslationEnabled } = useSnapshot(appState);
   const { selectedRootToken } = useSnapshot(interactiveTranslationState);
-  const { selectedLemma } = useSnapshot(dictionaryState);
+  const dictionarySnapshot = useSnapshot(dictionaryState);
+
+  const handleAddWordPOSToSet = useWordPOSSetActionWithReload({
+    loadSetWords: loadSetWords,
+    action: sendAddWordPOSToSetMessage,
+  });
+
+  const handleDeleteWordPOSFromSet = useWordPOSSetActionWithReload({
+    loadSetWords: loadSetWords,
+    action: sendDeleteWordPOSFromSetMessage,
+  });
+
+  useEffect(() => {
+    const load = async () => {
+      await loadSets(dictionarySnapshot.sets.paginator);
+    };
+
+    void load();
+  }, [dictionarySnapshot.sets.paginator]);
 
   useDraggableWidget({
     dragHandleRef,
@@ -46,11 +68,11 @@ export const AppShell = () => {
   });
 
   const handleCloseDictionaryWordDefinition = useEventCallback(() => {
-    setSelectedLemma(undefined);
+    setSelectedDictionaryWordPOS(undefined);
   });
 
-  const handleDictionaryEntryClick = useEventCallback((lemma: string) => {
-    setSelectedLemma(lemma);
+  const handleDictionaryEntryClick = useEventCallback((wordPOS: WordPOSWithLemma) => {
+    setSelectedDictionaryWordPOS(wordPOS);
   });
 
   useEffect(() => {
@@ -85,9 +107,9 @@ export const AppShell = () => {
 
         <AnimatedWordDefinitionBottomSheet
           show={!!selectedRootToken}
-          useLoadWordsDefinitions={useLoadWordsDefinitions}
+          useWordsDefinitions={useLoadWordsDefinitions}
           onClose={handleCloseLoadedWordDefinition}
-          // onAddToDictionary={addToDictionary}
+          onAddToDictionary={handleAddWordPOSToSet.apiCall}
         />
 
         <AnimatedSettingsScreen
@@ -95,9 +117,14 @@ export const AppShell = () => {
           onChangeTargetLanguage={setTargetLangueageWithPersistence}
         />
 
-        <AnimatedDictionaryScreen
-          useDictionary={useDictionarySnapshot}
-          onDictionaryEntryClick={handleDictionaryEntryClick}
+        <AnimatedDictionaryScreen onDictionaryEntryClick={handleDictionaryEntryClick} />
+
+        <AnimatedWordDefinitionBottomSheet
+          show={!!dictionarySnapshot.selectedWordPOS}
+          useWordsDefinitions={useWordDefinitionFromDictionary}
+          onClose={handleCloseDictionaryWordDefinition}
+          onAddToDictionary={handleAddWordPOSToSet.apiCall}
+          onDeleteFromDictionary={handleDeleteWordPOSFromSet.apiCall}
         />
       </main>
     </div>

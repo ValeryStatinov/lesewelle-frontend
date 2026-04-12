@@ -36,6 +36,13 @@ export class ApiClient {
     return this.httpClient.post<T>(path, { ...params, headers });
   }
 
+  public async delete<T>(path: string, params?: HttpClientRequestParams): Promise<T> {
+    const headers = params?.headers ?? new Headers();
+    await this.setAuthHeader(headers);
+
+    return this.httpClient.delete<T>(path, { ...params, headers });
+  }
+
   public async postStream(path: string, params?: HttpClientRequestParams): Promise<ReadableStreamDefaultReader> {
     const headers = params?.headers ?? new Headers();
     await this.setAuthHeader(headers);

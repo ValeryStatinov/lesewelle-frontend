@@ -1,48 +1,86 @@
-import type { WordPOS, WordPOSTypeExtended } from 'core/lib/apiClient/endpoints/types/words';
+import { useState } from 'react';
+import { BookMarked, BookmarkPlus, BookmarkX } from 'lucide-react';
+import { useSnapshot } from 'valtio';
+
+import { trackAddToDictionary, trackDeleteFromDictionary } from 'core/lib/amplitude/contentScriptTrackers';
+import type { Id } from 'core/lib/apiClient/endpoints/types/basemodel';
+import type { WordPOSTypeExtended, WordPOSWithLemma } from 'core/lib/apiClient/endpoints/types/words';
+import { dictionaryState } from 'core/lib/state/dictionaryState';
+import { Button } from 'core/lib/ui/atoms/Button/Button';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from 'core/lib/ui/molecules/Accordion/Accordion';
+import { Tooltip, TooltipContent, TooltipTrigger } from 'core/lib/ui/molecules/Tooltip/Tooltip';
 import { cn } from 'core/lib/utils/cn';
+import { humanReadableWordPOSType } from 'core/lib/utils/consts';
 import { capitalizeFirstLetter } from 'core/lib/utils/strings';
 
 import { WordPOSForms } from './WordPOSForms';
 
-const humanReadableWordPOSType: Record<WordPOSTypeExtended, string> = {
-  ADJ: 'Adjective',
-  ADP: 'Adposition',
-  ADV: 'Adverb',
-  AUX: 'Auxiliary verb',
-  CCONJ: 'Coordinating conjunction',
-  INTJ: 'Interjection',
-  NOUN: 'Noun',
-  NUM: 'Numeral',
-  PART: 'Particle',
-  PRON: 'Pronoun',
-  PROPN: 'Proper noun',
-  PUNCT: 'Punctuation',
-  SCONJ: 'Subordinating conjunction',
-  SYM: 'Symbol',
-  VERB: 'Verb',
-  X: 'Other',
-  DET: 'Determiner',
-  DEFINITE_ARTICLE: 'Definite article',
-  INDEFINITE_ARTICLE: 'Indefinite article',
-  DEMONSTRATIVE: 'Demonstrative',
-  POSSESSIVE: 'Possessive pronoun',
+const iconByAction = {
+  add: <BookmarkPlus />,
+  delete: <BookmarkX stroke='var(--color-red-400)' />,
+  added: <BookMarked stroke='var(--color-blue-700)' />,
+};
+
+const tooltipByAction = {
+  add: 'Add to dictionary',
+  delete: 'Delete from dictionary',
+  added: 'Added to dictionary!',
 };
 
 type Props = {
-  wordPOS: WordPOS;
+  wordPOS: WordPOSWithLemma;
   lemma: string;
   isSinglePOS?: boolean;
   className?: string;
+  onAddToDictionary?: (p: { setId: Id; wordPOSId: Id }) => Promise<void>;
+  onDeleteFromDictionary?: (p: { setId: Id; wordPOSId: Id }) => Promise<void>;
 };
 
 export const WordPOSView = (props: Props) => {
-  const { wordPOS, lemma, isSinglePOS, className } = props;
+  const { wordPOS, lemma, isSinglePOS, onAddToDictionary, onDeleteFromDictionary, className } = props;
+
+  const dictionarySnapshot = useSnapshot(dictionaryState);
+  const setId = dictionarySnapshot.sets.defaultSet?.id;
+
+  const bothProvided = !!(onAddToDictionary && onDeleteFromDictionary);
+  const [currentAction, setCurrentAction] = useState<'add' | 'delete' | 'added'>(bothProvided ? 'delete' : 'add');
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+
+  const addOrDeleteIcon = iconByAction[currentAction];
+  const addOrDeleteTooltip = tooltipByAction[currentAction];
+
+  const handleMouseEnter = () => {
+    setTooltipOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    setTooltipOpen(false);
+  };
+
+  const handleAddOrDeleteClick = () => {
+    if (!setId) {
+      console.error('[WordPOSView] no default set id');
+      return;
+    }
+
+    if (currentAction === 'delete') {
+      void onDeleteFromDictionary?.({ setId, wordPOSId: wordPOS.id });
+      trackDeleteFromDictionary(wordPOS);
+
+      setCurrentAction('add');
+    } else if (currentAction === 'add') {
+      void onAddToDictionary?.({ setId, wordPOSId: wordPOS.id });
+      trackAddToDictionary(wordPOS);
+
+      setCurrentAction(bothProvided ? 'delete' : 'added');
+    }
+  };
+
   const translations = wordPOS.translations.map((t) => t.translation).join(', ');
   const displayLemma = wordPOS.posType === 'NOUN' ? capitalizeFirstLetter(lemma) : lemma;
   const pos = wordPOS.nounProperties?.gender
@@ -67,11 +105,28 @@ export const WordPOSView = (props: Props) => {
 
   return (
     <div className={cn('flex flex-col', className)}>
-      <h2 className='text-base'>
+      <h2 className='flex flex-wrap items-center pr-8 text-base'>
         <span className='relative mr-2 inline-block rounded-md bg-blue-600 px-2 py-0.5 font-medium text-white'>
           {displayLemma}
         </span>
-        <span>{pos}</span>
+        <span className='mr-1'>{pos}</span>
+        {(onAddToDictionary || onDeleteFromDictionary) && (
+          <Tooltip open={tooltipOpen}>
+            <TooltipTrigger asChild>
+              <Button
+                variant='ghost'
+                size='icon-sm'
+                onClick={handleAddOrDeleteClick}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+                className={cn('justify-self-end', currentAction === 'added' && 'cursor-default')}
+              >
+                {addOrDeleteIcon}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side='bottom'>{addOrDeleteTooltip}</TooltipContent>
+          </Tooltip>
+        )}
       </h2>
 
       <div className='mt-3'>

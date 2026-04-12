@@ -144,6 +144,10 @@ export type WordPOS = BaseModel & {
   nounProperties?: NounProperties;
 };
 
+export type WordPOSWithLemma = WordPOS & {
+  lemma: string;
+};
+
 export type Word = BaseModel & {
   word: string;
   wordPOSs: WordPOS[];

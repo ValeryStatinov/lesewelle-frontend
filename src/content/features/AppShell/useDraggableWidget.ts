@@ -27,10 +27,10 @@ export const useDraggableWidget = (params: Params) => {
     const draggableElement = draggableElementRef.current;
 
     const setInitialPosition = () => {
-      const x = document.body.offsetWidth - draggableElement.offsetWidth;
-      const y = window.screen.availHeight / 8;
+      const x = Math.round(document.body.offsetWidth - draggableElement.offsetWidth);
+      const y = Math.round(window.screen.availHeight / 8);
 
-      draggableElement.style.transform = `translate(${x.toFixed(2)}px, ${y.toFixed(2)}px)`;
+      draggableElement.style.transform = `translate(${x.toString()}px, ${y.toString()}px)`;
     };
 
     setInitialPosition();

@@ -3,11 +3,11 @@ import { BookOpen, CircleMinus, Move, Settings } from 'lucide-react';
 import { useSnapshot } from 'valtio';
 
 import { setIsWidgetActive } from 'core/lib/state/appState';
+import { setSelectedDictionaryWordPOS } from 'core/lib/state/dictionaryState';
 import { screensState, setCurrentTab } from 'core/lib/state/screensState';
 import { Button } from 'core/lib/ui/atoms/Button/Button';
 import GradientText from 'core/lib/ui/molecules/GradientText/GradientText';
 import { cn } from 'core/lib/utils/cn';
-import { setSelectedLemma } from 'content/state/dictionaryState';
 
 type Props = {
   className?: string;
@@ -44,7 +44,7 @@ export const Header = (props: Props) => {
   const handleToggleDictionary = () => {
     if (currentTab === 'dictionary') {
       setCurrentTab(undefined);
-      setSelectedLemma(undefined);
+      setSelectedDictionaryWordPOS(undefined);
       return;
     }
 

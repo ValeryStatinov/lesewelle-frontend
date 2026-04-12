@@ -103,7 +103,10 @@ export const createLoadWordsDefinitionsHook = (loadWordsDefinitions: LoadWordsDe
           for (let i = 0; i < responses.length; i++) {
             const lemma = definitionPromises[i].lemma;
             const response = responses[i];
-            definitionsMap[lemma] = { wordByLemma: response.wordByLemma, wordsByForms: response.wordsByForms };
+            definitionsMap[lemma] = {
+              wordPOSsByForm: response.wordPOSsByForm,
+              wordPOSsByLemma: response.wordPOSsByLemma,
+            };
           }
 
           setDefinitionsMap(definitionsMap);

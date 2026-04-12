@@ -1,6 +1,5 @@
-import { persistenceManager } from 'background/persistence/persistenceManager';
-
 import { ApiClient, AuthManager, HttpClient, registerApiClient } from 'core/lib/apiClient';
+import { persistenceManager } from 'background/persistence/persistenceManager';
 
 export const initApiClient = () => {
   const httpClient = new HttpClient({

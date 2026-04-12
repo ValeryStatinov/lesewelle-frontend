@@ -1,4 +1,5 @@
-import type { Word } from 'core/lib/apiClient/endpoints/types/words';
+import type { Id } from 'core/lib/apiClient/endpoints/types/basemodel';
+import type { WordPOSWithLemma } from 'core/lib/apiClient/endpoints/types/words';
 import {
   Accordion,
   AccordionContent,
@@ -9,25 +10,29 @@ import {
 import { WordPOSView } from './WordPOSView';
 
 type Props = {
-  wordByLemma: Word;
-  wordsByForms: Word[];
+  wordPOSsByLemma: WordPOSWithLemma[];
+  wordPOSsByForm?: WordPOSWithLemma[];
+  onAddToDictionary?: (p: { setId: Id; wordPOSId: Id }) => Promise<void>;
+  onDeleteFromDictionary?: (p: { setId: Id; wordPOSId: Id }) => Promise<void>;
 };
 
 export const WordDefinition = (props: Props) => {
-  const { wordByLemma, wordsByForms } = props;
+  const { wordPOSsByLemma, wordPOSsByForm, onAddToDictionary, onDeleteFromDictionary } = props;
 
   return (
     <div className='flex flex-col gap-5'>
-      {wordByLemma.wordPOSs.map((pos) => (
+      {wordPOSsByLemma.map((pos) => (
         <WordPOSView
           wordPOS={pos}
-          lemma={wordByLemma.word}
-          isSinglePOS={wordByLemma.wordPOSs.length === 1}
+          lemma={pos.lemma}
+          isSinglePOS={wordPOSsByLemma.length === 1}
           key={pos.id}
+          onAddToDictionary={onAddToDictionary}
+          onDeleteFromDictionary={onDeleteFromDictionary}
         />
       ))}
 
-      {wordsByForms.length > 0 && (
+      {wordPOSsByForm && wordPOSsByForm.length > 0 && (
         <div className='flex flex-col'>
           <div className='mt-1 mb-2 border-t-2 border-stone-300' />
 
@@ -36,12 +41,13 @@ export const WordDefinition = (props: Props) => {
               <AccordionTrigger className='max-w-fit'>Also appears as inflected form</AccordionTrigger>
               <AccordionContent>
                 <div className='mt-3 flex flex-col gap-5'>
-                  {wordsByForms.map((w) => (
-                    <div key={w.id}>
-                      {w.wordPOSs.map((pos) => (
-                        <WordPOSView wordPOS={pos} lemma={w.word} isSinglePOS={w.wordPOSs.length === 1} key={pos.id} />
-                      ))}
-                    </div>
+                  {wordPOSsByForm.map((pos) => (
+                    <WordPOSView
+                      wordPOS={pos}
+                      lemma={pos.lemma}
+                      isSinglePOS={wordPOSsByForm.length === 1}
+                      key={pos.id}
+                    />
                   ))}
                 </div>
               </AccordionContent>

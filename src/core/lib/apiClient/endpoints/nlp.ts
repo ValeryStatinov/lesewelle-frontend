@@ -5,7 +5,7 @@ import { JsonStreamReader } from '../jsonStreamReader';
 import { _apiClient } from '../registerApiClient';
 
 import type { TokensGroupsMap, UIToken } from './types/tokens';
-import type { Word, WordPOSType } from './types/words';
+import type { Word, WordPOSType, WordPOSWithLemma } from './types/words';
 
 export type AnalyzeDeParams = {
   text: string;
@@ -18,23 +18,6 @@ export type AnalyzeDeResponse = {
 
 export const apiAnalyzeDe = async (params: AnalyzeDeParams) => {
   const response = await _apiClient.post<AnalyzeDeResponse>('/api/nlp/analyze_de', {
-    body: JSON.stringify(params),
-  });
-
-  return response;
-};
-
-export type TranslateWordParams = {
-  word: string;
-  targetLanguage: TargetLanguage;
-};
-
-export type TranslateWordResponse = {
-  translations: string[];
-};
-
-export const apiTranslateWord = async (params: TranslateWordParams) => {
-  const response = await _apiClient.post<TranslateWordResponse>('/api/nlp/translate/word', {
     body: JSON.stringify(params),
   });
 
@@ -69,15 +52,45 @@ export type WordsLookupParams = {
   pos?: WordPOSType;
 };
 
-export type WordsLookupReturn = {
+export type WordsLookupResponse = {
   wordByLemma: Word;
   wordsByForms: Word[];
 };
 
+export type WordsLookupReturn = {
+  wordPOSsByLemma: WordPOSWithLemma[];
+  wordPOSsByForm: WordPOSWithLemma[];
+};
+
 export const apiWordsLookup = async (params: WordsLookupParams) => {
-  const response = await _apiClient.post<WordsLookupReturn>('/api/nlp/words/lookup', {
+  const response = await _apiClient.post<WordsLookupResponse>('/api/nlp/words/lookup', {
     body: JSON.stringify(params),
   });
 
-  return response;
+  const result: WordsLookupReturn = {
+    wordPOSsByLemma: [],
+    wordPOSsByForm: [],
+  };
+
+  for (const pos of response.wordByLemma.wordPOSs) {
+    const posWithLemma: WordPOSWithLemma = {
+      ...pos,
+      lemma: response.wordByLemma.word,
+    };
+
+    result.wordPOSsByLemma.push(posWithLemma);
+  }
+
+  for (const w of response.wordsByForms) {
+    for (const pos of w.wordPOSs) {
+      const posWithLemma: WordPOSWithLemma = {
+        ...pos,
+        lemma: w.word,
+      };
+
+      result.wordPOSsByForm.push(posWithLemma);
+    }
+  }
+
+  return result;
 };
