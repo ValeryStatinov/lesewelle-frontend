@@ -51,7 +51,17 @@ export class HttpClient {
       }
     }
 
-    return response.json() as Promise<T>;
+    const responseContentType = response.headers.get('Content-Type');
+
+    if (responseContentType?.startsWith('application/json')) {
+      return response.json() as Promise<T>;
+    }
+
+    if (responseContentType === 'text/plain') {
+      return response.text() as Promise<T>;
+    }
+
+    return undefined as unknown as Promise<T>;
   }
 
   public async get<T>(path: string, params?: HttpClientRequestParams): Promise<T> {
@@ -67,6 +77,15 @@ export class HttpClient {
     const doRequestParams: DoRequestParams = {
       ...params,
       method: 'POST',
+    };
+
+    return this.doRequest<T>(path, doRequestParams);
+  }
+
+  public async delete<T>(path: string, params?: HttpClientRequestParams): Promise<T> {
+    const doRequestParams: DoRequestParams = {
+      ...params,
+      method: 'DELETE',
     };
 
     return this.doRequest<T>(path, doRequestParams);

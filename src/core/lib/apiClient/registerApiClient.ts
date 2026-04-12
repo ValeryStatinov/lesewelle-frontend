@@ -14,6 +14,9 @@ export let _apiClient: ApiClienter = {
   post: () => {
     throw apiClientNotInitializedError;
   },
+  delete: () => {
+    throw apiClientNotInitializedError;
+  },
   postStream: () => {
     throw apiClientNotInitializedError;
   },

@@ -1,13 +1,21 @@
 import {
   type ApiErrorResponseMessage,
   type ExtensionMessage,
+  isAddWordPOSToSetMessage,
   isAnalyzeTextDeMessage,
+  isDeleteWordPOSFromSetMessage,
+  isGetWordsSetsMessage,
+  isGetWordsSetWordsMessage,
   isTrackAnalyticsMessage,
   isTranslateTextPortName,
   isWordsLookupMessage,
   PortNameType,
 } from 'core/chromeMessages/messages';
+import { handleAddWordPOSToSet } from 'background/messageHandlers/handleAddWordPOSToSet';
 import { handleAnalyzeTextDe } from 'background/messageHandlers/handleAnalyzeTextDe';
+import { handleDeleteWordPOSFromSet } from 'background/messageHandlers/handleDeleteWordPOSFromSet';
+import { handleGetWordsSets } from 'background/messageHandlers/handleGetWordsSets';
+import { handleGetWordsSetWords } from 'background/messageHandlers/handleGetWordsSetWords';
 import { handleTrackAnalytics } from 'background/messageHandlers/handleTrackAnalytics';
 import { handleTranslateTextStream } from 'background/messageHandlers/handleTranslateTextStream';
 import { handleWordsLookup } from 'background/messageHandlers/handleWordsLookup';
@@ -28,6 +36,30 @@ export const registerMessageListeners = () => {
 
     if (isWordsLookupMessage(message)) {
       void handleWordsLookup(message, sender, sendResponse);
+
+      return true;
+    }
+
+    if (isGetWordsSetsMessage(message)) {
+      void handleGetWordsSets(message, sender, sendResponse);
+
+      return true;
+    }
+
+    if (isGetWordsSetWordsMessage(message)) {
+      void handleGetWordsSetWords(message, sender, sendResponse);
+
+      return true;
+    }
+
+    if (isAddWordPOSToSetMessage(message)) {
+      void handleAddWordPOSToSet(message, sender, sendResponse);
+
+      return true;
+    }
+
+    if (isDeleteWordPOSFromSetMessage(message)) {
+      void handleDeleteWordPOSFromSet(message, sender, sendResponse);
 
       return true;
     }

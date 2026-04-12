@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { CircleX } from 'lucide-react';
 
+import type { Id } from 'core/lib/apiClient/endpoints/types/basemodel';
 import { Button } from 'core/lib/ui/atoms/Button/Button';
 import { BottomSheet, type BottomSheetProps } from 'core/lib/ui/molecules/BottomSheet/BottomSheet';
 import { Animator } from 'core/lib/ui/organisms/Animator/Animator';
@@ -11,21 +12,31 @@ import { WordDefinition } from './WordDefinition';
 
 type OwnProps = {
   onClose: () => void;
-  useLoadWordsDefinitions: () => UseWordDefinitionsReturn;
+  useWordsDefinitions: () => UseWordDefinitionsReturn;
+  onAddToDictionary?: (p: { setId: Id; wordPOSId: Id }) => Promise<void>;
+  onDeleteFromDictionary?: (p: { setId: Id; wordPOSId: Id }) => Promise<void>;
 };
 
 type WordDefinitionBottimSheetProps = BottomSheetProps & OwnProps;
 
 const WordDefinitionBottomSheet = (props: WordDefinitionBottimSheetProps) => {
-  const { className, onTransitionEnd, onAnimationEnd, onClose, useLoadWordsDefinitions } = props;
+  const {
+    className,
+    onTransitionEnd,
+    onAnimationEnd,
+    onClose,
+    useWordsDefinitions,
+    onAddToDictionary,
+    onDeleteFromDictionary,
+  } = props;
 
-  const { definitionsMap, loading, error } = useLoadWordsDefinitions();
+  const { definitionsMap, loading, error } = useWordsDefinitions();
   // TODO for complex verbs like 'ich melde mich an' definitions for 'sich anmelden' and 'anmelden'
   // will be loaded to populate database with both word.
   // although in current version only definition for full verb group will be displayed for user
   const firstEntry = Object.values(definitionsMap)[0];
-  const lookupWord = firstEntry?.wordByLemma;
-  const wordsByForms = firstEntry?.wordsByForms ?? [];
+  const wordPOSsByLemma = firstEntry?.wordPOSsByLemma;
+  const wordPOSsByForm = firstEntry?.wordPOSsByForm;
 
   return (
     <BottomSheet
@@ -40,7 +51,14 @@ const WordDefinitionBottomSheet = (props: WordDefinitionBottimSheetProps) => {
       {loading && <div>Loading...</div>}
       {error && <div>{error}</div>}
 
-      {!loading && !error && lookupWord && <WordDefinition wordByLemma={lookupWord} wordsByForms={wordsByForms} />}
+      {!loading && !error && wordPOSsByLemma && (
+        <WordDefinition
+          wordPOSsByLemma={wordPOSsByLemma}
+          wordPOSsByForm={wordPOSsByForm}
+          onAddToDictionary={onAddToDictionary}
+          onDeleteFromDictionary={onDeleteFromDictionary}
+        />
+      )}
     </BottomSheet>
   );
 };
@@ -50,9 +68,12 @@ type AnimatedWordDefinitionBottomSheetProps = OwnProps & {
 };
 
 export const AnimatedWordDefinitionBottomSheet = (props: AnimatedWordDefinitionBottomSheetProps) => {
-  const { useLoadWordsDefinitions, onClose, show } = props;
+  const { useWordsDefinitions, onAddToDictionary, onDeleteFromDictionary, onClose, show } = props;
 
-  const dataProp: OwnProps = useMemo(() => ({ useLoadWordsDefinitions, onClose }), [useLoadWordsDefinitions, onClose]);
+  const dataProp: OwnProps = useMemo(
+    () => ({ useWordsDefinitions, onAddToDictionary, onDeleteFromDictionary, onClose }),
+    [useWordsDefinitions, onAddToDictionary, onDeleteFromDictionary, onClose],
+  );
 
   return (
     <Animator<OwnProps>

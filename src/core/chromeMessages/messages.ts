@@ -1,10 +1,8 @@
 import type { AnalyticsEvents } from 'core/lib/amplitude/events';
-import {
-  type AnalyzeDeResponse,
-  ResponseErrorJSON,
-  type TranslateWordResponse,
-  type WordsLookupReturn,
-} from 'core/lib/apiClient';
+import { type AnalyzeDeResponse, ResponseErrorJSON, type WordsLookupReturn } from 'core/lib/apiClient';
+import type { GetWordsSetsResponse, GetWordsSetWordsResponse } from 'core/lib/apiClient/endpoints/sets';
+import type { Id } from 'core/lib/apiClient/endpoints/types/basemodel';
+import type { Paginator } from 'core/lib/apiClient/endpoints/types/paginator';
 import type { WordPOSType } from 'core/lib/apiClient/endpoints/types/words';
 import type { TargetLanguage } from 'core/lib/types/languages';
 
@@ -14,6 +12,10 @@ export enum ExtensionMessageType {
   TRANSLATE_TEXT_STREAM = 'TRANSLATE_TEXT_STREAM',
   TRACK_ANALYTICS = 'TRACK_ANALYTICS',
   WORDS_LOOKUP = 'WORDS_LOOKUP',
+  GET_WORDS_SETS = 'GET_WORDS_SETS',
+  GET_WORDS_SET_WORDS = 'GET_WORDS_SET_WORDS',
+  ADD_WORD_POS_TO_SET = 'ADD_WORD_POS_TO_SET',
+  DELETE_WORD_POS_FROM_SET = 'DELETE_WORD_POS_FROM_SET',
 }
 
 export type ExtensionMessage = {
@@ -28,7 +30,14 @@ export type ApiErrorResponseMessage = {
   };
 };
 
-function throwOnApiError<T extends object>(response: T | ApiErrorResponseMessage): asserts response is T {
+function throwOnApiError<T extends object | undefined>(
+  response: T | ApiErrorResponseMessage,
+  options: { allowEmptyResponse?: boolean } = {},
+): asserts response is T {
+  if (!response && !!options.allowEmptyResponse) {
+    return;
+  }
+
   if (!response) {
     throw new Error('response from background script is undefined');
   }
@@ -160,4 +169,110 @@ export const sendWordsLookupMessage = async (word: string, targetLanguage: Targe
 
 export const isWordsLookupMessage = (message: ExtensionMessage): message is WordsLookupMessage => {
   return message.type === ExtensionMessageType.WORDS_LOOKUP;
+};
+
+export type GetWordsSetsMessage = {
+  type: ExtensionMessageType.GET_WORDS_SETS;
+  payload: {
+    paginator: Paginator;
+  };
+};
+
+export const sendGetWordsSetsMessage = async (paginator: Paginator) => {
+  const message: GetWordsSetsMessage = {
+    type: ExtensionMessageType.GET_WORDS_SETS,
+    payload: { paginator },
+  };
+
+  const response = await chrome.runtime.sendMessage<
+    GetWordsSetsMessage,
+    GetWordsSetsResponse | ApiErrorResponseMessage
+  >(message);
+
+  throwOnApiError(response);
+
+  return response;
+};
+
+export const isGetWordsSetsMessage = (message: ExtensionMessage): message is GetWordsSetsMessage => {
+  return message.type === ExtensionMessageType.GET_WORDS_SETS;
+};
+
+export type GetWordsSetWordsMessage = {
+  type: ExtensionMessageType.GET_WORDS_SET_WORDS;
+  payload: {
+    setId: Id;
+    paginator: Paginator;
+    lang: TargetLanguage;
+  };
+};
+
+export const sendGetWordsSetWordsMessage = async (setId: Id, lang: TargetLanguage, paginator: Paginator) => {
+  const message: GetWordsSetWordsMessage = {
+    type: ExtensionMessageType.GET_WORDS_SET_WORDS,
+    payload: { setId, paginator, lang },
+  };
+
+  const response = await chrome.runtime.sendMessage<
+    GetWordsSetWordsMessage,
+    GetWordsSetWordsResponse | ApiErrorResponseMessage
+  >(message);
+
+  throwOnApiError(response);
+
+  return response;
+};
+
+export const isGetWordsSetWordsMessage = (message: ExtensionMessage): message is GetWordsSetWordsMessage => {
+  return message.type === ExtensionMessageType.GET_WORDS_SET_WORDS;
+};
+
+export type AddWordPOSToSetMessage = {
+  type: ExtensionMessageType.ADD_WORD_POS_TO_SET;
+  payload: {
+    setId: Id;
+    wordPOSId: Id;
+  };
+};
+
+export const sendAddWordPOSToSetMessage = async (setId: Id, wordPOSId: Id) => {
+  const message: AddWordPOSToSetMessage = {
+    type: ExtensionMessageType.ADD_WORD_POS_TO_SET,
+    payload: { setId, wordPOSId },
+  };
+
+  const response = await chrome.runtime.sendMessage<AddWordPOSToSetMessage, undefined | ApiErrorResponseMessage>(
+    message,
+  );
+
+  throwOnApiError(response, { allowEmptyResponse: true });
+};
+
+export const isAddWordPOSToSetMessage = (message: ExtensionMessage): message is AddWordPOSToSetMessage => {
+  return message.type === ExtensionMessageType.ADD_WORD_POS_TO_SET;
+};
+
+export type DeleteWordPOSFromSetMessage = {
+  type: ExtensionMessageType.DELETE_WORD_POS_FROM_SET;
+  payload: {
+    setId: Id;
+    wordPOSId: Id;
+  };
+};
+
+export const sendDeleteWordPOSFromSetMessage = async (setId: Id, wordPOSId: Id) => {
+  const message: DeleteWordPOSFromSetMessage = {
+    type: ExtensionMessageType.DELETE_WORD_POS_FROM_SET,
+    payload: { setId, wordPOSId },
+  };
+
+  const response = await chrome.runtime.sendMessage<DeleteWordPOSFromSetMessage, undefined | ApiErrorResponseMessage>(
+    message,
+  );
+
+  throwOnApiError(response, { allowEmptyResponse: true });
+};
+
+export const isDeleteWordPOSFromSetMessage = (message: ExtensionMessage): message is DeleteWordPOSFromSetMessage => {
+  return message.type === ExtensionMessageType.DELETE_WORD_POS_FROM_SET;
 };

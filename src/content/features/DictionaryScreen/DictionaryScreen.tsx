@@ -2,6 +2,7 @@ import { useSnapshot } from 'valtio';
 
 import { trackOpenDictionary, trackStudyWords } from 'core/lib/amplitude/contentScriptTrackers';
 import { useTrackOpen } from 'core/lib/amplitude/useTrackOpen';
+import type { WordPOSWithLemma } from 'core/lib/apiClient/endpoints/types/words';
 import { Dictionary } from 'core/lib/features/Dictionary/Dictionary';
 import { screensState } from 'core/lib/state/screensState';
 import { Separator } from 'core/lib/ui/atoms/Separator/Separator';
@@ -10,13 +11,14 @@ import type { ScreenProps } from 'core/lib/ui/molecules/Screen/types';
 import { Animator } from 'core/lib/ui/organisms/Animator/Animator';
 import { cn } from 'core/lib/utils/cn';
 
+import { loadSetWords } from './dictionaryApiCalls';
+
 type OwnProps = {
-  useDictionary: () => Record<string, string[]>;
-  onDictionaryEntryClick: (lemma: string) => void;
+  onDictionaryEntryClick: (wordPOS: WordPOSWithLemma) => void;
 };
 
 const DictionaryScreen = (props: ScreenProps & OwnProps) => {
-  const { useDictionary, onDictionaryEntryClick, className, onAnimationEnd, onTransitionEnd } = props;
+  const { onDictionaryEntryClick, className, onAnimationEnd, onTransitionEnd } = props;
 
   useTrackOpen(trackOpenDictionary);
   const handleStudyClick = () => {
@@ -28,8 +30,8 @@ const DictionaryScreen = (props: ScreenProps & OwnProps) => {
       <Separator />
       <Dictionary
         className='mt-2 flex h-full flex-1 flex-col'
-        useDictionary={useDictionary}
         onDictionaryEntryClick={onDictionaryEntryClick}
+        loadSetWords={loadSetWords}
         onStudyClick={handleStudyClick}
       />
     </Screen>

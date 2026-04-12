@@ -18,6 +18,7 @@ dist-ssr
 dist/
 bundle-stats.html
 extension.zip
+test.html
 
 # Editor directories and files
 .vscode/*

@@ -1,8 +1,8 @@
-import type { Word } from 'core/lib/apiClient/endpoints/types/words';
+import type { WordPOSWithLemma } from 'core/lib/apiClient/endpoints/types/words';
 
 export type WordDefinitionEntry = {
-  wordByLemma: Word | undefined;
-  wordsByForms: Word[];
+  wordPOSsByLemma: WordPOSWithLemma[];
+  wordPOSsByForm: WordPOSWithLemma[];
 };
 
 export type UseWordDefinitionsReturn = {
