@@ -4,9 +4,10 @@ import { useSnapshot } from 'valtio';
 
 import { trackAddToDictionary, trackDeleteFromDictionary } from 'core/lib/amplitude/contentScriptTrackers';
 import type { Id } from 'core/lib/apiClient/endpoints/types/basemodel';
-import type { WordPOSTypeExtended, WordPOSWithLemma } from 'core/lib/apiClient/endpoints/types/words';
+import type { WordPOSWithLemma } from 'core/lib/apiClient/endpoints/types/words';
 import { dictionaryState } from 'core/lib/state/dictionaryState';
 import { Button } from 'core/lib/ui/atoms/Button/Button';
+import { LemmaTag } from 'core/lib/ui/atoms/LemmaTag/LemmaTag';
 import {
   Accordion,
   AccordionContent,
@@ -16,8 +17,9 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from 'core/lib/ui/molecules/Tooltip/Tooltip';
 import { cn } from 'core/lib/utils/cn';
 import { humanReadableWordPOSType } from 'core/lib/utils/consts';
-import { capitalizeFirstLetter } from 'core/lib/utils/strings';
+import { formatLemma } from 'core/lib/utils/strings';
 
+import { UsageExamples } from './UsageExamples';
 import { WordPOSForms } from './WordPOSForms';
 
 const iconByAction = {
@@ -34,7 +36,6 @@ const tooltipByAction = {
 
 type Props = {
   wordPOS: WordPOSWithLemma;
-  lemma: string;
   isSinglePOS?: boolean;
   className?: string;
   onAddToDictionary?: (p: { setId: Id; wordPOSId: Id }) => Promise<void>;
@@ -42,7 +43,7 @@ type Props = {
 };
 
 export const WordPOSView = (props: Props) => {
-  const { wordPOS, lemma, isSinglePOS, onAddToDictionary, onDeleteFromDictionary, className } = props;
+  const { wordPOS, isSinglePOS, onAddToDictionary, onDeleteFromDictionary, className } = props;
 
   const dictionarySnapshot = useSnapshot(dictionaryState);
   const setId = dictionarySnapshot.sets.defaultSet?.id;
@@ -82,33 +83,21 @@ export const WordPOSView = (props: Props) => {
   };
 
   const translations = wordPOS.translations.map((t) => t.translation).join(', ');
-  const displayLemma = wordPOS.posType === 'NOUN' ? capitalizeFirstLetter(lemma) : lemma;
   const pos = wordPOS.nounProperties?.gender
     ? `${humanReadableWordPOSType[wordPOS.posType]} (${wordPOS.nounProperties.gender})`
     : humanReadableWordPOSType[wordPOS.posType];
 
   const usageExamplesAndForms = (
-    <div className='flex flex-col gap-2'>
-      {wordPOS.usageExamples.length > 0 &&
-        wordPOS.usageExamples.map((example) => (
-          <div
-            key={example.id}
-            className={`max-w-fit border-l-2 border-blue-200 bg-blue-50/50 py-1 pr-4 pl-2 text-sm text-stone-600 italic`}
-          >
-            {example.example}
-          </div>
-        ))}
-
+    <>
+      {wordPOS.usageExamples.length > 0 && <UsageExamples usageExamples={wordPOS.usageExamples} />}
       {wordPOS.forms.length > 0 && <WordPOSForms forms={wordPOS.forms} className='mt-4' />}
-    </div>
+    </>
   );
 
   return (
     <div className={cn('flex flex-col', className)}>
       <h2 className='flex flex-wrap items-center pr-8 text-base'>
-        <span className='relative mr-2 inline-block rounded-md bg-blue-600 px-2 py-0.5 font-medium text-white'>
-          {displayLemma}
-        </span>
+        <LemmaTag className='mr-2'>{formatLemma(wordPOS.lemma, wordPOS.nounProperties?.gender)}</LemmaTag>
         <span className='mr-1'>{pos}</span>
         {(onAddToDictionary || onDeleteFromDictionary) && (
           <Tooltip open={tooltipOpen}>

@@ -6,8 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from 'core/lib/ui/molecules/Accordion/Accordion';
-
-import { WordPOSView } from './WordPOSView';
+import { WordPOSView } from 'core/lib/ui/organisms/WordPOSView/WordPOSView';
 
 type Props = {
   wordPOSsByLemma: WordPOSWithLemma[];
@@ -24,7 +23,6 @@ export const WordDefinition = (props: Props) => {
       {wordPOSsByLemma.map((pos) => (
         <WordPOSView
           wordPOS={pos}
-          lemma={pos.lemma}
           isSinglePOS={wordPOSsByLemma.length === 1}
           key={pos.id}
           onAddToDictionary={onAddToDictionary}
@@ -42,12 +40,7 @@ export const WordDefinition = (props: Props) => {
               <AccordionContent>
                 <div className='mt-3 flex flex-col gap-5'>
                   {wordPOSsByForm.map((pos) => (
-                    <WordPOSView
-                      wordPOS={pos}
-                      lemma={pos.lemma}
-                      isSinglePOS={wordPOSsByForm.length === 1}
-                      key={pos.id}
-                    />
+                    <WordPOSView wordPOS={pos} isSinglePOS={wordPOSsByForm.length === 1} key={pos.id} />
                   ))}
                 </div>
               </AccordionContent>
