@@ -105,7 +105,7 @@ export class PriorityQueue<T extends PriorityQueueItem> {
 
     const top = this.items[0];
     this.items[0] = this.items[this.size() - 1];
-    this.items.length = this.size() - 1;
+    this.items.pop();
     this.siftDown(0);
 
     return top;

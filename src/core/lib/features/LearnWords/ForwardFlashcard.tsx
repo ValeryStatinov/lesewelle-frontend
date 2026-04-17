@@ -55,7 +55,7 @@ const Front = (props: FrontProps) => {
 
 type Props = WithClassName & {
   wordPOS: WordPOSWithLemma;
-  side: FlashcardSideType;
+  side?: FlashcardSideType;
   onClick?: (event: MouseEvent<HTMLDivElement>) => void;
 };
 

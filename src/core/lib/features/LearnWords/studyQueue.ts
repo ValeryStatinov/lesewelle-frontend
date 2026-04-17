@@ -16,11 +16,11 @@ class StudyCard<T> {
   }
 
   public compare(other: StudyCard<T>) {
-    if (this.queuePosition - other.queuePosition >= 0) {
-      return 1;
+    if (this.queuePosition - other.queuePosition > 0) {
+      return -1;
     }
 
-    return -1;
+    return 1;
   }
 }
 
@@ -48,7 +48,7 @@ export class StudyQueue<T> {
       const card = new StudyCard(it, this.maxQueuePosition);
       cards.push(card);
       this.cardMap.set(it, card);
-      this.maxQueuePosition++;
+      this.maxQueuePosition += 1;
     }
 
     this.learningQueue = new PriorityQueue(cards);

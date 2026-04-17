@@ -25,7 +25,7 @@ export const useApiCaller = <P = void, R = void>(fn: (p: P) => Promise<R>, optio
       const response = await fn(p);
 
       if (requestIndex !== loadRequestIndexRef.current) {
-        return;
+        return response;
       }
 
       setData(response);
@@ -85,7 +85,7 @@ export const createApiCaller = <P = void, R = void>(
       const response = await fn(p);
 
       if (requestIndex !== loadRequestIndex) {
-        return;
+        return response;
       }
 
       if ('data' in store) {

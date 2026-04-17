@@ -105,11 +105,9 @@ export const Dictionary = (props: Props) => {
   const dictionarySnapshot = useSnapshot(dictionaryState);
   const appSnapshot = useSnapshot(appState);
 
-  const [clickedStudy, setClickedStudy] = useState(false);
   const { ref: listRef, sentinelRef, isScrolledToBottom } = useIsScrolledToBottom<HTMLDivElement>();
 
   const handleStudyClick = () => {
-    setClickedStudy(true);
     onStudyClick();
   };
 
@@ -148,17 +146,9 @@ export const Dictionary = (props: Props) => {
           />
         )}
         <div ref={listRef} className='hide-scrollbar flex flex-1 flex-col overflow-auto'>
-          {clickedStudy ? (
-            <div className='mb-1 text-sm text-stone-400'>
-              Just around the corner: <b>Spaced Repetition Learning!</b> This intelligent feature is under active
-              development and will help to make memorization even more efficient. Stay tuned and keep{' '}
-              <b>adding words</b>!
-            </div>
-          ) : (
-            <Button onClick={handleStudyClick} className='mb-1 flex max-w-fit'>
-              Study words with Spaced Repetition Learning
-            </Button>
-          )}
+          <Button onClick={handleStudyClick} className='mb-1 flex max-w-fit'>
+            Study words with Spaced Repetition Learning
+          </Button>
 
           {dictionarySnapshot.setWords.error && <div>{dictionarySnapshot.setWords.error}</div>}
 
