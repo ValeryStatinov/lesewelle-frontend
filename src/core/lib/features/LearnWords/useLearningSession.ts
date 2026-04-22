@@ -13,6 +13,9 @@ import { useEventCallback } from 'core/lib/utils/useEventCallback';
 
 import { StudyQueue } from './studyQueue';
 
+const PAGINATOR_LIMIT = 100;
+const QUEUE_SIZE_TO_LOAD_MORE = 3;
+
 type Params = {
   rawLoadSetWords: (setId: Id, lang: TargetLanguage, p: Paginator) => Promise<GetWordsSetWordsResponse>;
 };
@@ -21,10 +24,14 @@ export const useLearningSession = (params: Params) => {
   const { rawLoadSetWords } = params;
 
   const studyQueueRef = useRef(new StudyQueue<WordPOSWithLemma>());
-  const [paginator, setPaginator] = useState<Paginator>({ limit: 100, offset: 0 });
+  const [paginator, setPaginator] = useState<Paginator>({ limit: PAGINATOR_LIMIT, offset: 0 });
   const [currentWordPOS, setCurrentWordPOS] = useState<WordPOSWithLemma | undefined>(undefined);
   const [isSetFullyLoaded, setIsSetFullyLoaded] = useState(false);
   const [isLearningSessionFinished, setIsLearningSessionFinished] = useState(false);
+
+  const cardsReviewedRef = useRef(0);
+  const totalSetSizeRef = useRef(0);
+  const cardShownAtRef = useRef<number>(Date.now());
 
   const appSnapshot = useSnapshot(appState);
   const learningSessionSnapshot = useSnapshot(learningSessionState);
@@ -33,6 +40,7 @@ export const useLearningSession = (params: Params) => {
     const next = studyQueueRef.current.nextCard();
     if (!next) {
       if (isSetFullyLoaded) {
+        setCurrentWordPOS(undefined);
         setIsLearningSessionFinished(true);
         return;
       }
@@ -42,6 +50,7 @@ export const useLearningSession = (params: Params) => {
     }
 
     setCurrentWordPOS(next);
+    cardShownAtRef.current = Date.now();
   });
 
   const loadSetWordsApiCaller = useApiCaller(async () => {
@@ -61,12 +70,18 @@ export const useLearningSession = (params: Params) => {
     };
     setPaginator(newPaginator);
 
+    totalSetSizeRef.current += result.setWords.length;
+
     if (result.setWords.length < paginator.limit) {
       setIsSetFullyLoaded(true);
     }
 
     if (studyQueueRef.current.size() === 0) {
-      studyQueueRef.current = new StudyQueue({ initialItems: result.setWords });
+      let requiredEasyStreak = 3;
+      if (result.setWords.length < 10) {
+        requiredEasyStreak = 2;
+      }
+      studyQueueRef.current = new StudyQueue({ initialItems: result.setWords, requiredEasyStreak });
     } else {
       studyQueueRef.current.addToQueue(result.setWords);
     }
@@ -82,22 +97,33 @@ export const useLearningSession = (params: Params) => {
     void loadSetWords();
   }, [loadSetWords]);
 
+  const getTimeSpentOnCardMs = useEventCallback(() => {
+    return Date.now() - cardShownAtRef.current;
+  });
+
   const handleEasyClick = useEventCallback((wordPOS: WordPOSWithLemma) => {
+    cardsReviewedRef.current++;
     studyQueueRef.current.onEasy(wordPOS);
 
     updateWordPOSToNext();
 
-    if (studyQueueRef.current.size() <= 3 && !isSetFullyLoaded && !loadSetWordsApiCaller.loading) {
+    if (
+      studyQueueRef.current.size() <= QUEUE_SIZE_TO_LOAD_MORE &&
+      !isSetFullyLoaded &&
+      !loadSetWordsApiCaller.loading
+    ) {
       void loadSetWords();
     }
   });
 
   const handleMediumClick = useEventCallback((wordPOS: WordPOSWithLemma) => {
+    cardsReviewedRef.current++;
     studyQueueRef.current.onMedium(wordPOS);
     updateWordPOSToNext();
   });
 
   const handleHardClick = useEventCallback((wordPOS: WordPOSWithLemma) => {
+    cardsReviewedRef.current++;
     studyQueueRef.current.onHard(wordPOS);
     updateWordPOSToNext();
   });
@@ -110,5 +136,8 @@ export const useLearningSession = (params: Params) => {
     handleMediumClick,
     handleHardClick,
     isLearningSessionFinished,
+    getTimeSpentOnCardMs,
+    getCardsReviewed: () => cardsReviewedRef.current,
+    getTotalSetSize: () => totalSetSizeRef.current,
   };
 };

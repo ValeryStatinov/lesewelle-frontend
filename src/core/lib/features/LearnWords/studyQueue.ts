@@ -24,8 +24,12 @@ class StudyCard<T> {
   }
 }
 
+/**
+ * @param requiredEasyStreak starts from 1, default value 3
+ */
 export type StudyQueueParams<T> = {
   initialItems?: T[];
+  requiredEasyStreak?: number;
 };
 
 export class StudyQueue<T> {
@@ -38,9 +42,15 @@ export class StudyQueue<T> {
   private easyBaseIncrement = 6;
   private mediumStreakIncrement = 3;
   private easyStreakIncrement = 4;
+  private requiredEasyStreak = 3;
 
   public constructor(params: StudyQueueParams<T> = {}) {
-    const { initialItems = [] } = params;
+    const { initialItems = [], requiredEasyStreak } = params;
+
+    if (requiredEasyStreak !== undefined && requiredEasyStreak < 1) {
+      throw new Error(`requiredEasyStreak has invalid value: ${requiredEasyStreak.toString()}`);
+    }
+    this.requiredEasyStreak = requiredEasyStreak ?? this.requiredEasyStreak;
 
     const shuffledItems = shuffle([...initialItems]);
     const cards: StudyCard<T>[] = [];
@@ -107,7 +117,7 @@ export class StudyQueue<T> {
 
   public onEasy(item: T) {
     const card = this.getStudyCard(item);
-    if (card.easyStreak === 2) {
+    if (card.easyStreak === this.requiredEasyStreak - 1) {
       this.cardMap.delete(item);
       return;
     }

@@ -1,4 +1,4 @@
-import { type MouseEvent, type RefObject, useRef } from 'react';
+import { type MouseEvent } from 'react';
 
 import type { WordPOSWithLemma } from 'core/lib/apiClient/endpoints/types/words';
 import type { WithClassName } from 'core/lib/types/common';
@@ -12,33 +12,34 @@ import {
 } from 'core/lib/ui/molecules/Accordion/Accordion';
 import { UsageExamples } from 'core/lib/ui/organisms/WordPOSView/UsageExamples';
 import { WordPOSView } from 'core/lib/ui/organisms/WordPOSView/WordPOSView';
-import { humanReadableWordPOSType } from 'core/lib/utils/consts';
-import { formatLemma } from 'core/lib/utils/strings';
+import { formatLemma, formatPOSType } from 'core/lib/utils/strings';
 
 type FrontProps = {
   wordPOS: WordPOSWithLemma;
-  usageExamplesTriggerRef: RefObject<HTMLButtonElement | null>;
+  usageExamplesOpen: boolean;
+  onUsageExamplesClick?: () => void;
 };
 
 const Front = (props: FrontProps) => {
-  const { wordPOS, usageExamplesTriggerRef } = props;
+  const { wordPOS, usageExamplesOpen, onUsageExamplesClick } = props;
 
-  const pos = wordPOS.nounProperties?.gender
-    ? `${humanReadableWordPOSType[wordPOS.posType]} (${wordPOS.nounProperties.gender})`
-    : humanReadableWordPOSType[wordPOS.posType];
+  const handleUsageExamplesClick = (event: MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    onUsageExamplesClick?.();
+  };
 
   return (
     <div className='flex min-h-full items-center p-3'>
       <div className='flex w-full flex-wrap items-center justify-center gap-2'>
         <LemmaTag>{formatLemma(wordPOS.lemma, wordPOS.nounProperties?.gender)}</LemmaTag>
-        <span className='text-sm text-stone-400'>{pos}</span>
+        <span className='text-sm text-stone-400'>{formatPOSType(wordPOS.posType, wordPOS.nounProperties?.gender)}</span>
 
         {wordPOS.usageExamples.length > 0 && (
-          <Accordion type='single' collapsible>
+          <Accordion type='single' collapsible value={usageExamplesOpen ? 'usage-examples' : ''}>
             <AccordionItem value='usage-examples' className='flex flex-col items-center'>
               <AccordionTrigger
-                ref={usageExamplesTriggerRef}
                 className='max-w-fit cursor-help font-normal text-stone-400'
+                onClick={handleUsageExamplesClick}
               >
                 Reveal usage examples
               </AccordionTrigger>
@@ -55,30 +56,24 @@ const Front = (props: FrontProps) => {
 
 type Props = WithClassName & {
   wordPOS: WordPOSWithLemma;
-  side?: FlashcardSideType;
+  side: FlashcardSideType;
+  usageExamplesOpen: boolean;
+  onUsageExamplesClick?: () => void;
   onClick?: (event: MouseEvent<HTMLDivElement>) => void;
 };
 
 export const ForwardFlashcard = (props: Props) => {
-  const { wordPOS, side, onClick, className } = props;
-
-  const usageExamplesTriggerRef = useRef<HTMLButtonElement>(null);
-
-  const handleClick = (event: MouseEvent<HTMLDivElement>) => {
-    if (event.target === usageExamplesTriggerRef.current) {
-      return;
-    }
-
-    onClick?.(event);
-  };
+  const { wordPOS, side, usageExamplesOpen, onUsageExamplesClick, onClick, className } = props;
 
   return (
     <AbstractFlashcard
       side={side}
-      front={<Front wordPOS={wordPOS} usageExamplesTriggerRef={usageExamplesTriggerRef} />}
+      front={
+        <Front wordPOS={wordPOS} usageExamplesOpen={usageExamplesOpen} onUsageExamplesClick={onUsageExamplesClick} />
+      }
       back={<WordPOSView wordPOS={wordPOS} className='p-3' isSinglePOS />}
       className={className}
-      onClick={handleClick}
+      onClick={onClick}
     />
   );
 };

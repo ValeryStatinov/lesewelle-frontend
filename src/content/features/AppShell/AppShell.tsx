@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react';
-import { RemoveScroll } from 'react-remove-scroll';
 import { useSnapshot } from 'valtio';
 
 import {
@@ -13,7 +12,6 @@ import type { WordPOSWithLemma } from 'core/lib/apiClient/endpoints/types/words'
 import { useWordPOSSetActionWithReload } from 'core/lib/features/Dictionary/createDictionaryApiCalls';
 import { InteractiveTranslation } from 'core/lib/features/InteractiveTranslation/InteractiveTranslation';
 import { useTranslatedTextExt } from 'core/lib/features/InteractiveTranslation/useTranslatedTextExt';
-import { ForwardFlashcard } from 'core/lib/features/LearnWords/ForwardFlashcard';
 import { createLoadWordsDefinitionsHook } from 'core/lib/features/WordDefinition/useLoadWordsDefinitions';
 import { useWordDefinitionFromDictionary } from 'core/lib/features/WordDefinition/useWordDefinitionFromDictionary';
 import { AnimatedWordDefinitionBottomSheet } from 'core/lib/features/WordDefinition/WordDefinitionBottomSheet';
@@ -25,7 +23,6 @@ import {
   setSelectedRootToken,
 } from 'core/lib/state/interactiveTranslationState';
 import { learningSessionState } from 'core/lib/state/learningSessionState';
-import { Backdrop } from 'core/lib/ui/atoms/Backdrop/Backdrop';
 import { useEventCallback } from 'core/lib/utils/useEventCallback';
 import { loadSets, loadSetWords } from 'content/features/DictionaryScreen/dictionaryApiCalls';
 import { AnimatedDictionaryScreen } from 'content/features/DictionaryScreen/DictionaryScreen';

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useSnapshot } from 'valtio';
 
@@ -9,8 +9,7 @@ import { appState } from 'core/lib/state/appState';
 import { dictionaryState, setSetWordsPaginatorPage } from 'core/lib/state/dictionaryState';
 import type { TargetLanguage } from 'core/lib/types/languages';
 import { Button } from 'core/lib/ui/atoms/Button/Button';
-import { humanReadableWordPOSType } from 'core/lib/utils/consts';
-import { capitalizeFirstLetter } from 'core/lib/utils/strings';
+import { capitalizeFirstLetter, formatPOSType } from 'core/lib/utils/strings';
 import { useIsScrolledToBottom } from 'core/lib/utils/useIsScrolledToBottom';
 
 type DictionaryEntryProps = {
@@ -23,9 +22,6 @@ const DictionaryEntry = (props: DictionaryEntryProps) => {
 
   const translations = wordPOS.translations.map((t) => t.translation).join(', ');
   const displayLemma = wordPOS.posType === 'NOUN' ? capitalizeFirstLetter(wordPOS.lemma) : wordPOS.lemma;
-  const pos = wordPOS.nounProperties?.gender
-    ? `${humanReadableWordPOSType[wordPOS.posType]} (${wordPOS.nounProperties.gender})`
-    : humanReadableWordPOSType[wordPOS.posType];
 
   const handleClick = () => {
     onDictionaryEntryClick(wordPOS);
@@ -42,7 +38,7 @@ const DictionaryEntry = (props: DictionaryEntryProps) => {
     >
       <div className='flex items-center gap-2'>
         <div className='font-bold'>{displayLemma}</div>
-        <div className='text-sm'>{pos}</div>
+        <div className='text-sm'>{formatPOSType(wordPOS.posType, wordPOS.nounProperties?.gender)}</div>
       </div>
       <div className='truncate text-stone-400'>{translations}</div>
     </button>

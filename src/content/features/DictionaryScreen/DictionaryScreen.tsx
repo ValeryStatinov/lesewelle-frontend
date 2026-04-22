@@ -5,7 +5,7 @@ import { useTrackOpen } from 'core/lib/amplitude/useTrackOpen';
 import type { WordPOSWithLemma } from 'core/lib/apiClient/endpoints/types/words';
 import { Dictionary } from 'core/lib/features/Dictionary/Dictionary';
 import { dictionaryState } from 'core/lib/state/dictionaryState';
-import { learningSessionState, setLearningSetId } from 'core/lib/state/learningSessionState';
+import { setLearningSetId } from 'core/lib/state/learningSessionState';
 import { screensState } from 'core/lib/state/screensState';
 import { Separator } from 'core/lib/ui/atoms/Separator/Separator';
 import { Screen } from 'core/lib/ui/molecules/Screen/Screen';
@@ -26,6 +26,7 @@ const DictionaryScreen = (props: ScreenProps & OwnProps) => {
   useTrackOpen(trackOpenDictionary);
   const handleStudyClick = () => {
     trackStudyWords();
+
     if (!dictionarySnapshot.sets.defaultSet) {
       console.error(new Error('default set id is unknown yet'));
       return;

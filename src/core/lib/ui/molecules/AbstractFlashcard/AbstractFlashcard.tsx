@@ -1,4 +1,4 @@
-import { type MouseEvent, type PropsWithChildren, type ReactNode, useEffect, useState } from 'react';
+import { type MouseEvent, type PropsWithChildren, type ReactNode } from 'react';
 
 import type { WithClassName } from 'core/lib/types/common';
 import { cn } from 'core/lib/utils/cn';
@@ -28,49 +28,28 @@ const FlashcardSide = (props: PropsWithChildren<FlashcardSideProps>) => {
 };
 
 type Props = {
-  side?: FlashcardSideType;
+  side: FlashcardSideType;
   front: ReactNode;
   back: ReactNode;
   className?: string;
+  cardClassName?: string;
   onClick?: (event: MouseEvent<HTMLDivElement>) => void;
 };
 
 export const AbstractFlashcard = (props: Props) => {
-  const { front, back, side, onClick, className } = props;
-  const [effectiveSide, setEffectiveSide] = useState<FlashcardSideType>(side ?? 'front');
-
-  useEffect(() => {
-    if (!!side) {
-      setEffectiveSide(side);
-    }
-  }, [side]);
-
-  useEffect(() => {
-    if (!side) {
-      setEffectiveSide('front');
-    }
-  }, [side, front, back]);
-
-  const handleClick = (event: MouseEvent<HTMLDivElement>) => {
-    onClick?.(event);
-    if (!!side) {
-      return;
-    }
-
-    const newSide = effectiveSide === 'front' ? 'back' : 'front';
-    setEffectiveSide(newSide);
-  };
+  const { front, back, side, onClick, className, cardClassName } = props;
 
   return (
-    <div className={cn('cursor-pointer perspective-midrange', className)} onClick={handleClick}>
+    <div className={cn('cursor-pointer perspective-midrange', className)} onClick={onClick}>
       <div
         className={cn(
-          'relative h-full w-full rounded-sm bg-white transition-transform duration-300 transform-3d',
-          effectiveSide === 'back' && 'rotate-y-180',
+          'relative h-full w-full rounded-sm bg-white transition-all duration-200 transform-3d',
+          side === 'back' && 'rotate-y-180',
+          cardClassName,
         )}
       >
-        <FlashcardSide show={effectiveSide === 'front'}>{front}</FlashcardSide>
-        <FlashcardSide show={effectiveSide === 'back'} flipped>
+        <FlashcardSide show={side === 'front'}>{front}</FlashcardSide>
+        <FlashcardSide show={side === 'back'} flipped>
           {back}
         </FlashcardSide>
       </div>

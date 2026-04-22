@@ -16,8 +16,7 @@ import {
 } from 'core/lib/ui/molecules/Accordion/Accordion';
 import { Tooltip, TooltipContent, TooltipTrigger } from 'core/lib/ui/molecules/Tooltip/Tooltip';
 import { cn } from 'core/lib/utils/cn';
-import { humanReadableWordPOSType } from 'core/lib/utils/consts';
-import { formatLemma } from 'core/lib/utils/strings';
+import { formatLemma, formatPOSType } from 'core/lib/utils/strings';
 
 import { UsageExamples } from './UsageExamples';
 import { WordPOSForms } from './WordPOSForms';
@@ -83,9 +82,6 @@ export const WordPOSView = (props: Props) => {
   };
 
   const translations = wordPOS.translations.map((t) => t.translation).join(', ');
-  const pos = wordPOS.nounProperties?.gender
-    ? `${humanReadableWordPOSType[wordPOS.posType]} (${wordPOS.nounProperties.gender})`
-    : humanReadableWordPOSType[wordPOS.posType];
 
   const usageExamplesAndForms = (
     <>
@@ -98,7 +94,9 @@ export const WordPOSView = (props: Props) => {
     <div className={cn('flex flex-col', className)}>
       <h2 className='flex flex-wrap items-center pr-8 text-base'>
         <LemmaTag className='mr-2'>{formatLemma(wordPOS.lemma, wordPOS.nounProperties?.gender)}</LemmaTag>
-        <span className='mr-1'>{pos}</span>
+        <span className='mr-1 text-sm text-stone-400'>
+          {formatPOSType(wordPOS.posType, wordPOS.nounProperties?.gender)}
+        </span>
         {(onAddToDictionary || onDeleteFromDictionary) && (
           <Tooltip open={tooltipOpen}>
             <TooltipTrigger asChild>

@@ -10,4 +10,11 @@ export enum AnalyticsEvents {
   ADD_TO_DICTIONARY = 'addToDictionary',
   DELETE_FROM_DICTIONARY = 'deleteFromDictionary',
   STUDY_WORDS = 'studyWords',
+  STUDY_WORDS_EASY = 'studyWordsEasy',
+  STUDY_WORDS_MEDIUM = 'studyWordsMedium',
+  STUDY_WORDS_HARD = 'studyWordsHard',
+  STUDY_WORDS_FLIP_FLASHCARD = 'studyWordsFlipFlashcard',
+  STUDY_WORDS_SESSION_FINISHED = 'studyWordsSessionFinished',
+  STUDY_WORDS_SESSION_ABORTED = 'studyWordsSessionAborted',
+  STUDY_WORDS_TOGGLE_USAGE_EXAMPLES = 'studyWordsToggleUsageExamples',
 }
