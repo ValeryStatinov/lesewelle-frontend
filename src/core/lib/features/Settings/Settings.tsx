@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from 'c
 
 const FULL_TEXT_TRANSLATION_ID = 'full-text-translation';
 const TARGET_TRANSLATION_LANGUAGE_ID = 'target-translation-language';
+const FEEDBACK_URL = 'https://forms.gle/HVjeDig1NvBBoCq4A';
 
 type Props = {
   onChangeFullTextTranslationEnabled: (isFullTextTranslationEnabled: boolean) => void;
@@ -53,6 +54,12 @@ export const Settings = (props: Props) => {
             ))}
           </SelectContent>
         </Select>
+      </div>
+
+      <div className='mt-1'>
+        <a className='cursor-pointer text-sm underline' href={FEEDBACK_URL} target='_blank' rel='noopener noreferrer'>
+          Give feedback
+        </a>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import type { WordPOSTypeExtended } from 'core/lib/apiClient/endpoints/types/words';
+import { NounGender, type WordPOSTypeExtended } from 'core/lib/apiClient/endpoints/types/words';
 
 export const SOMETHING_WENT_WRONG = 'Something went wrong...';
 
@@ -24,4 +24,16 @@ export const humanReadableWordPOSType: Record<WordPOSTypeExtended, string> = {
   INDEFINITE_ARTICLE: 'Indefinite article',
   DEMONSTRATIVE: 'Demonstrative',
   POSSESSIVE: 'Possessive pronoun',
+};
+
+export const articleByGender: Record<NounGender, string> = {
+  neuter: 'das',
+  feminine: 'die',
+  masculine: 'der',
+};
+
+export const humanReadableGenderShort: Record<NounGender, string> = {
+  neuter: 'n',
+  feminine: 'f',
+  masculine: 'm',
 };

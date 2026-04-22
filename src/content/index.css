@@ -41,6 +41,23 @@
   }
 
   --animate-accordion-up: accordion-up .5s ease-out; 
+
+  @keyframes card-exit {
+    0% {
+      opacity: 1;
+      transform: translate(0, 0) scale(1);
+    }
+    60% {
+      opacity: 1;
+      transform: translate(0, 0) scale(0.96);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(0, 0) scale(1);
+    }
+  }
+
+  --animate-card-exit: card-exit 350ms cubic-bezier(.54, .11, .51, 1) forwards; 
 }
 
 :root,

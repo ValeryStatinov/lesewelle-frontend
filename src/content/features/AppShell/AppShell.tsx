@@ -5,6 +5,7 @@ import {
   sendAddWordPOSToSetMessage,
   sendAnalyzeTextDeMessage,
   sendDeleteWordPOSFromSetMessage,
+  sendGetWordsSetWordsMessage,
   sendWordsLookupMessage,
 } from 'core/chromeMessages/messages';
 import type { WordPOSWithLemma } from 'core/lib/apiClient/endpoints/types/words';
@@ -21,11 +22,14 @@ import {
   resetInteractiveTranslationState,
   setSelectedRootToken,
 } from 'core/lib/state/interactiveTranslationState';
+import { learningSessionState } from 'core/lib/state/learningSessionState';
 import { useEventCallback } from 'core/lib/utils/useEventCallback';
 import { loadSets, loadSetWords } from 'content/features/DictionaryScreen/dictionaryApiCalls';
 import { AnimatedDictionaryScreen } from 'content/features/DictionaryScreen/DictionaryScreen';
 import { AnimatedSettingsScreen } from 'content/features/Settings/SettingsScreen';
 import { setIsTextTranslationEnabledWithPersistence, setTargetLangueageWithPersistence } from 'content/state/appState';
+
+import { AnimatedLearningSession } from '../LearnWords/LearningSession';
 
 import { Header } from './Header';
 import { useDraggableWidget } from './useDraggableWidget';
@@ -38,6 +42,7 @@ export const AppShell = () => {
   const { isWidgetActive, isTextTranslationEnabled } = useSnapshot(appState);
   const { selectedRootToken } = useSnapshot(interactiveTranslationState);
   const dictionarySnapshot = useSnapshot(dictionaryState);
+  const learningSessinSnapshot = useSnapshot(learningSessionState);
 
   const handleAddWordPOSToSet = useWordPOSSetActionWithReload({
     loadSetWords: loadSetWords,
@@ -88,45 +93,53 @@ export const AppShell = () => {
   }
 
   return (
-    <div
-      ref={containerRef}
-      className={`
-        fixed top-0 left-0 z-99999 flex h-125 max-h-screen w-95 flex-col rounded-sm bg-white p-2 text-sm drop-shadow-lg
-      `}
-    >
-      <header>
-        <Header dragHandleRef={dragHandleRef} />
-      </header>
+    <>
+      <div
+        ref={containerRef}
+        className={`
+          fixed top-0 left-0 z-99999 flex h-125 max-h-screen w-95 flex-col rounded-sm bg-white p-2 text-sm
+          drop-shadow-lg
+        `}
+      >
+        <header>
+          <Header dragHandleRef={dragHandleRef} />
+        </header>
 
-      <main className='relative mt-2 flex flex-1 flex-col overflow-hidden'>
-        <InteractiveTranslation
-          analyzeDEText={sendAnalyzeTextDeMessage}
-          useTranslatedText={useTranslatedTextExt}
-          isTextTranslationEnabled={isTextTranslationEnabled}
-        />
+        <main className='relative mt-2 flex flex-1 flex-col overflow-hidden'>
+          <InteractiveTranslation
+            analyzeDEText={sendAnalyzeTextDeMessage}
+            useTranslatedText={useTranslatedTextExt}
+            isTextTranslationEnabled={isTextTranslationEnabled}
+          />
 
-        <AnimatedWordDefinitionBottomSheet
-          show={!!selectedRootToken}
-          useWordsDefinitions={useLoadWordsDefinitions}
-          onClose={handleCloseLoadedWordDefinition}
-          onAddToDictionary={handleAddWordPOSToSet.apiCall}
-        />
+          <AnimatedWordDefinitionBottomSheet
+            show={!!selectedRootToken}
+            useWordsDefinitions={useLoadWordsDefinitions}
+            onClose={handleCloseLoadedWordDefinition}
+            onAddToDictionary={handleAddWordPOSToSet.apiCall}
+          />
 
-        <AnimatedSettingsScreen
-          onChangeFullTextTranslationEnabled={setIsTextTranslationEnabledWithPersistence}
-          onChangeTargetLanguage={setTargetLangueageWithPersistence}
-        />
+          <AnimatedSettingsScreen
+            onChangeFullTextTranslationEnabled={setIsTextTranslationEnabledWithPersistence}
+            onChangeTargetLanguage={setTargetLangueageWithPersistence}
+          />
 
-        <AnimatedDictionaryScreen onDictionaryEntryClick={handleDictionaryEntryClick} />
+          <AnimatedDictionaryScreen onDictionaryEntryClick={handleDictionaryEntryClick} />
 
-        <AnimatedWordDefinitionBottomSheet
-          show={!!dictionarySnapshot.selectedWordPOS}
-          useWordsDefinitions={useWordDefinitionFromDictionary}
-          onClose={handleCloseDictionaryWordDefinition}
-          onAddToDictionary={handleAddWordPOSToSet.apiCall}
-          onDeleteFromDictionary={handleDeleteWordPOSFromSet.apiCall}
-        />
-      </main>
-    </div>
+          <AnimatedWordDefinitionBottomSheet
+            show={!!dictionarySnapshot.selectedWordPOS}
+            useWordsDefinitions={useWordDefinitionFromDictionary}
+            onClose={handleCloseDictionaryWordDefinition}
+            onAddToDictionary={handleAddWordPOSToSet.apiCall}
+            onDeleteFromDictionary={handleDeleteWordPOSFromSet.apiCall}
+          />
+        </main>
+      </div>
+
+      <AnimatedLearningSession
+        rawLoadSetWords={sendGetWordsSetWordsMessage}
+        show={!!learningSessinSnapshot.learningSetId}
+      />
+    </>
   );
 };

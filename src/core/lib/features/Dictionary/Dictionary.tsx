@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useSnapshot } from 'valtio';
 
@@ -9,8 +9,7 @@ import { appState } from 'core/lib/state/appState';
 import { dictionaryState, setSetWordsPaginatorPage } from 'core/lib/state/dictionaryState';
 import type { TargetLanguage } from 'core/lib/types/languages';
 import { Button } from 'core/lib/ui/atoms/Button/Button';
-import { humanReadableWordPOSType } from 'core/lib/utils/consts';
-import { capitalizeFirstLetter } from 'core/lib/utils/strings';
+import { capitalizeFirstLetter, formatPOSType } from 'core/lib/utils/strings';
 import { useIsScrolledToBottom } from 'core/lib/utils/useIsScrolledToBottom';
 
 type DictionaryEntryProps = {
@@ -23,9 +22,6 @@ const DictionaryEntry = (props: DictionaryEntryProps) => {
 
   const translations = wordPOS.translations.map((t) => t.translation).join(', ');
   const displayLemma = wordPOS.posType === 'NOUN' ? capitalizeFirstLetter(wordPOS.lemma) : wordPOS.lemma;
-  const pos = wordPOS.nounProperties?.gender
-    ? `${humanReadableWordPOSType[wordPOS.posType]} (${wordPOS.nounProperties.gender})`
-    : humanReadableWordPOSType[wordPOS.posType];
 
   const handleClick = () => {
     onDictionaryEntryClick(wordPOS);
@@ -42,7 +38,7 @@ const DictionaryEntry = (props: DictionaryEntryProps) => {
     >
       <div className='flex items-center gap-2'>
         <div className='font-bold'>{displayLemma}</div>
-        <div className='text-sm'>{pos}</div>
+        <div className='text-sm'>{formatPOSType(wordPOS.posType, wordPOS.nounProperties?.gender)}</div>
       </div>
       <div className='truncate text-stone-400'>{translations}</div>
     </button>
@@ -105,11 +101,9 @@ export const Dictionary = (props: Props) => {
   const dictionarySnapshot = useSnapshot(dictionaryState);
   const appSnapshot = useSnapshot(appState);
 
-  const [clickedStudy, setClickedStudy] = useState(false);
   const { ref: listRef, sentinelRef, isScrolledToBottom } = useIsScrolledToBottom<HTMLDivElement>();
 
   const handleStudyClick = () => {
-    setClickedStudy(true);
     onStudyClick();
   };
 
@@ -148,17 +142,9 @@ export const Dictionary = (props: Props) => {
           />
         )}
         <div ref={listRef} className='hide-scrollbar flex flex-1 flex-col overflow-auto'>
-          {clickedStudy ? (
-            <div className='mb-1 text-sm text-stone-400'>
-              Just around the corner: <b>Spaced Repetition Learning!</b> This intelligent feature is under active
-              development and will help to make memorization even more efficient. Stay tuned and keep{' '}
-              <b>adding words</b>!
-            </div>
-          ) : (
-            <Button onClick={handleStudyClick} className='mb-1 flex max-w-fit'>
-              Study words with Spaced Repetition Learning
-            </Button>
-          )}
+          <Button onClick={handleStudyClick} className='mb-1 flex max-w-fit'>
+            Study words
+          </Button>
 
           {dictionarySnapshot.setWords.error && <div>{dictionarySnapshot.setWords.error}</div>}
 
