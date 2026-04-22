@@ -14,6 +14,12 @@ export const initialize = async () => {
   chrome.runtime.onInstalled.addListener((details) => {
     trackExtensionInstalled(details.reason);
 
+    if (details.reason === 'install') {
+      void chrome.tabs.create({
+        url: 'https://github.com/ValeryStatinov/lesewelle-frontend/blob/master/Onboarding.md',
+      });
+    }
+
     chrome.contextMenus.create({
       id: CONTEXT_MENU_ID,
       title: 'Translate selection with Lesewelle',
