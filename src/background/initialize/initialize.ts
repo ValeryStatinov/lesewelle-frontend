@@ -16,7 +16,7 @@ export const initialize = async () => {
 
     if (details.reason === 'install') {
       void chrome.tabs.create({
-        url: 'https://github.com/ValeryStatinov/lesewelle-frontend/blob/master/Onboarding.md',
+        url: 'https://github.com/ValeryStatinov/lesewelle-frontend/blob/master/onboarding/Onboarding.md',
       });
     }
 

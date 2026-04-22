@@ -143,7 +143,7 @@ export const Dictionary = (props: Props) => {
         )}
         <div ref={listRef} className='hide-scrollbar flex flex-1 flex-col overflow-auto'>
           <Button onClick={handleStudyClick} className='mb-1 flex max-w-fit'>
-            Study words with Spaced Repetition Learning
+            Study words
           </Button>
 
           {dictionarySnapshot.setWords.error && <div>{dictionarySnapshot.setWords.error}</div>}
