@@ -51,10 +51,12 @@ Chrome Extension <--> Go API Gateway <--> Python NLP Service
 ## Release
 1) Run one of
 ```bash
-yarn version --patch
-yarn version --minor
-yarn version --major
+yarn version patch
+yarn version minor
+yarn version major
 ```
 
 2) Run `yarn release`
-3) upload created `extension.zip` to chrome web store
+3) Update version in manifest.json
+4) upload created `extension.zip` to chrome web store
+
