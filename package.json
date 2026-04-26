@@ -1,7 +1,7 @@
 {
   "name": "lesewelle-frontend",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "scripts": {
     "dev:content": "vite build -m development --watch --config vite.config.content.ts",
