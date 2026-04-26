@@ -44,13 +44,9 @@ export const Animator = <T,>(props: Props<T>) => {
 
   useEffect(() => {
     if (show) {
-      queueMicrotask(() => {
-        flushSync(() => {
-          setIsRendered(true);
-        });
-      });
+      setIsRendered(true);
 
-      queueMicrotask(() => {
+      requestAnimationFrame(() => {
         setShouldAnimate(true);
       });
 

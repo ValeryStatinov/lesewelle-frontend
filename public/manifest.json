@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Lesewelle",
-  "description": "Lesewelle extension to analyze German text and get translations",
-  "version": "1.0.0",
+  "name": "German Translator & Flashcards - Lesewelle",
+  "description": "German translator that gets separable & reflexive verbs right. Click any word for definitions, save and drill with flashcards.",
+  "version": "1.0.1",
   "commands": {
     "reload-extension": {
       "suggested_key": {

@@ -2,9 +2,16 @@ import { useRef } from 'react';
 import { useSnapshot } from 'valtio';
 
 import { type AnalyzeDeResponse } from 'core/lib/apiClient';
-import { interactiveTranslationState, setGroupsMap, setUITokens } from 'core/lib/state/interactiveTranslationState';
+import {
+  interactiveTranslationState,
+  setGroupsMap,
+  setSelectedRootToken,
+  setUITokens,
+} from 'core/lib/state/interactiveTranslationState';
 import { useApiErrorHandler } from 'core/lib/utils/useApiErrorHandler';
 import { useEventCallback } from 'core/lib/utils/useEventCallback';
+
+import { findSingleLogicalWordRoot } from './findSingleLogicalWordRoot';
 
 type Params = {
   analyzeDEText: (text: string) => Promise<AnalyzeDeResponse>;
@@ -29,6 +36,7 @@ export const useUITokens = (params: Params) => {
 
     setUITokens([]);
     setGroupsMap({});
+    setSelectedRootToken(undefined);
     resetApiErrorMessage();
 
     try {
@@ -36,6 +44,14 @@ export const useUITokens = (params: Params) => {
 
       setUITokens(response.tokens);
       setGroupsMap(response.groupsMap);
+
+      // allow bottomsheet close animation to run
+      setTimeout(() => {
+        const singleWordRoot = findSingleLogicalWordRoot(response.tokens, response.groupsMap);
+        if (singleWordRoot) {
+          setSelectedRootToken(singleWordRoot);
+        }
+      }, 200);
     } catch (error) {
       handleApiError(error);
     }
