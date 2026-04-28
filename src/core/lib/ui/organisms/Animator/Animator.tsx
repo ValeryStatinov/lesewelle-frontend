@@ -43,17 +43,26 @@ export const Animator = <T,>(props: Props<T>) => {
   const [shouldAnimate, setShouldAnimate] = useState(false);
 
   useEffect(() => {
+    let raf: number;
+    let raf2: number;
+
     if (show) {
       setIsRendered(true);
 
-      requestAnimationFrame(() => {
-        setShouldAnimate(true);
+      // double requestAnimationFrame to guarantee that browser paint happens before shouldAnimate is true
+      raf = requestAnimationFrame(() => {
+        raf2 = requestAnimationFrame(() => {
+          setShouldAnimate(true);
+        });
       });
-
-      return;
     }
 
     setShouldAnimate(false);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      cancelAnimationFrame(raf2);
+    };
   }, [show]);
 
   const handleAnimationEnd = useEventCallback((event: React.AnimationEvent | React.TransitionEvent) => {
